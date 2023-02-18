@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-u$lwwq2a-4$*o1hb7==7t86*78hdaszp27t3ft=q=0^(!-!4vm'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+if 'DJANGO_DEBUG_FALSE' in os.environ:
+    DEBUG = False
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+    ALLOWED_HOSTS = [os.environ['SITENAME']]
+else:
+    DEBUG = True
+    SECRET_KEY = 'django-insecure-u$lwwq2a-4$*o1hb7==7t86*78hdaszp27t3ft=q=0^(!-!4vm'
+    ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -37,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'issues',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -118,8 +125,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, './staticfiles/'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+        },
+    },
+    'root': {'level': 'INFO'},
+}
