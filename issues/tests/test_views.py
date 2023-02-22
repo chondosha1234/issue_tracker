@@ -12,3 +12,8 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertEquals(response.templates[0].name, 'issue_list.html')
         self.assertTemplateUsed(response, 'issue_list.html')
+
+
+class IssueListTest(TestCase):
+
+    pass 

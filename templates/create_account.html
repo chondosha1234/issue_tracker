@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'accounts_style.css' %}">
+{% endblock %}
+
+{% block body_content %}
+  <br>
+  <div class="row">
+    <form action="{% url 'accounts:create_account' %}" method="post">
+      {% csrf_token %}
+      <div class="form-outline mb-4">
+          {{ form.email }}
+      </div>
+      <div class="form-outline mb-4">
+          {{ form.password }}
+      </div>
+      <div class="form-outline mb-4">
+          {{ form.confirm_password }}
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-block mb-4">Sign up</button>
+      </div>
+    </form>
+
+    <div class="text-center">
+      <p>Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+    </div>
+  </div>
+{% endblock %}
