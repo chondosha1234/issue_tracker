@@ -15,9 +15,36 @@ class IssueListView(ListView):
     template_name = 'issue_list.html'
     paginate_by = 49
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
+        if self.kwargs.get('filter_term'):
+            filter = self.kwargs.get('filter_term')
+            if filter == 'recent':
+                return Issue.objects.order_by('-created_on')
+            if filter == 'popular':
+                return Issue.objects.order_by('-visits')
+            if filter == 'open':
+                return Issue.objects.filter(issue_status='Open')
+            if filter == 'closed':
+                return Issue.objects.filter(issue_status='Closed')
+            if not filter:
+                return Issue.objects.all()
+        else:
+            return Issue.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super(IssueListView, self).get_context_data(**kwargs)
+        """
+        filter_set = Issue.objects.all()
+        if self.request.GET.get('recent'):
+            filter_set = Issue.objects.order_by('-created_on')
+        if self.request.GET.get('popular'):
+            filter_set = Issue.objects.order_by('-visits')
+        if self.request.GET.get('open'):
+            filter_set = Issue.objects.filter(status='Open')
+        if self.request.GET.get('closed'):
+            filter_set = Issue.objects.filter(status='Closed')
+        context['issues'] = filter_set
+        """
         return context
 
 
