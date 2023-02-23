@@ -10,9 +10,10 @@ class Project(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_created_by')
     modified_on = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_modified_by')
+    visits = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ('created_on', 'title')
+        ordering = ('-created_on', 'title')
 
     def __str__(self):
         return self.title
@@ -38,11 +39,11 @@ class Issue(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_created_by')
     modified_on = models.DateField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_modified_by')
-    visits = models.IntegerField()
+    visits = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ('issue_status', 'priority', 'created_on', 'visits')
-        unique_together = ('project', 'title')
+        ordering = ('issue_status', 'priority', '-created_on', '-visits')
+        #unique_together = ('project', 'title')
 
     def __str__(self):
         return self.title

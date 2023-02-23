@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from issues.models import Issue, Project
 
+
 def home_page(request):
     return render(request, 'issue_list.html')
 
@@ -33,18 +34,6 @@ class IssueListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
-        """
-        filter_set = Issue.objects.all()
-        if self.request.GET.get('recent'):
-            filter_set = Issue.objects.order_by('-created_on')
-        if self.request.GET.get('popular'):
-            filter_set = Issue.objects.order_by('-visits')
-        if self.request.GET.get('open'):
-            filter_set = Issue.objects.filter(status='Open')
-        if self.request.GET.get('closed'):
-            filter_set = Issue.objects.filter(status='Closed')
-        context['issues'] = filter_set
-        """
         return context
 
 
@@ -53,7 +42,44 @@ class ProjectListView(ListView):
     template_name = 'project_list.html'
     paginate_by = 49
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
+        if self.kwargs.get('filter_term'):
+            filter = self.kwargs.get('filter_term')
+            if filter == 'recent':
+                return Project.objects.order_by('-created_on')
+            if filter == 'popular':
+                return Project.objects.order_by('-visits')
+            if not filter:
+                return Project.objects.all()
+        else:
+            return Project.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectListView, self).get_context_data(**kwargs)
+        return context
+
+
+class ProjectDetailView(ListView):
+    model = Issue
+    template_name = 'project_details.html'
+    paginate_by = 49
+
+    def get_queryset(self):
+        project = Project.objects.get(pk=self.kwargs.get('project_id'))
+        issues = Issue.objects.filter(project=project)
+
+        if self.kwargs.get('filter_term'):
+            filter = self.kwargs.get('filter_term')
+            if filter == 'open':
+                return issues.filter(issue_status='Open').order_by('-created_on')
+            if filter == 'closed':
+                return issues.filter(issue_status='Closed').order_by('-created_on')
+            if not filter:
+                return issues.order_by('-created_on')
+        else:
+            return issues.order_by('-created_on')
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDetailView, self).get_context_data(**kwargs)
+        context['project'] = Project.objects.get(pk=self.kwargs.get('project_id'))
         return context
