@@ -13,7 +13,7 @@ User = get_user_model()
 
 def logout(request):
     auth_logout(request)
-    return redirect('home')
+    return redirect('issues:home')
 
 
 class LoginView(View):
@@ -35,7 +35,7 @@ class LoginView(View):
             user = authenticate(email=email, password=password)
             if user:
                 auth_login(request, user)
-                return redirect('home')
+                return redirect('issues:home')
         context = {
             'form': form
         }

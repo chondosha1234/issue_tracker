@@ -16,10 +16,18 @@
     <nav class="navbar navbar-dark bg-dark rounded" role="navigation">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'issues:home' %}">Home</a>
-        <ul class="nav navbar-nav">
-          <li><a href="{% url 'issues:project_list' %}">Projects</a></li>
-          <li><a href="{% url 'issues:issue_list' %}">Issues</a></li>
+        <a href="{% url 'issues:project_list' %}">Projects</a>
+        <a href="{% url 'issues:issue_list' %}">Issues</a>
+        {% if user.email %}
+        <ul class="nav navbar-nav navbar-right">
+          <li class="navbar-text" name="account-info">Logged in as {{ user.email }}</li>
+          <li><a href="{% url 'accounts:logout' %}">Log out</a></li>
         </ul>
+        {% else %}
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'accounts:login' %}">Login</a></li>
+        </ul>
+        {% endif %}
       </div>
     </nav>
 

@@ -86,7 +86,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         issue_link = self.wait_for_element_link('Test')
         issue_link.click()
         self.assertRegex(self.browser.current_url, '/issue_details/1')
-        edit_btn = self.wait_for_element_link('Edit Issue')
+        edit_btn = self.wait_for_element_link('Update Issue')
         edit_btn.click()
 
         # user clicks it and is redirected to log in page

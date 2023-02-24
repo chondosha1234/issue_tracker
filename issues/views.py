@@ -3,12 +3,23 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 
 from issues.models import Issue, Project
+
+User = get_user_model()
 
 
 def home_page(request):
     return redirect('issues:issue_list')
+
+
+class UserHome(DetailView):
+    pass
+
+
+class UserProfile(DetailView):
+    pass
 
 
 class IssueListView(ListView):
@@ -94,13 +105,28 @@ class ProjectDetailView(ListView):
 
 
 @login_required(login_url='accounts:login')
-def create_issue(request, issue_id):
+def create_project(request):
+    return render(request, 'create_project.html')
+
+
+@login_required(login_url='accounts:login')
+def update_project(request, project_id):
+    return render(request, 'update_project.html')
+
+
+@login_required(login_url='accounts:login')
+def delete_project(request, project_id):
+    return render(request, 'delete_project.html')
+
+
+@login_required(login_url='accounts:login')
+def create_issue(request, project_id):
     return render(request, 'create_issue.html')
 
 
 @login_required(login_url='accounts:login')
-def edit_issue(request, issue_id):
-    return render(request, 'edit_issue.html')
+def update_issue(request, issue_id):
+    return render(request, 'update_issue.html')
 
 
 @login_required(login_url='accounts:login')

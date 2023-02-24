@@ -18,7 +18,7 @@
           <p> {{ issue.modified_by }} </p>
           <p> {{ issue.modified_on | date }} </p>
       </div>
-      <a href="{% url 'issues:edit_issue' issue.id %}">Edit Issue</a>
+      <a href="{% url 'issues:update_issue' issue.id %}">Update Issue</a>
     </div>
   </div>
 
