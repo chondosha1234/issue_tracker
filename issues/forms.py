@@ -8,7 +8,7 @@ PRIORITY_CHOICES = [
 ]
 
 
-class CreateProjectForm(forms.ModelForm):
+class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
@@ -29,10 +29,13 @@ class CreateProjectForm(forms.ModelForm):
         }
 
     def __init__(self, user, *args, **kwargs):
-        super(CreateProjectForm, self).__init__(*args, **kwargs)
+        super(ProjectForm, self).__init__(*args, **kwargs)
         self.user = user
         self.fields['title'].label = ''
         self.fields['summary'].label = ''
+
+
+class CreateProjectForm(ProjectForm):
 
     def save(self, commit=True):
         project = super().save(commit=False)
@@ -43,7 +46,17 @@ class CreateProjectForm(forms.ModelForm):
         return project
 
 
-class UpdateProjectForm(forms.Form):
+class UpdateProjectForm(ProjectForm):
+
+    def save(self, commit=True):
+        project = super().save(commit=False)
+        project.modified_by = self.user
+        if commit:
+            project.save()
+        return project
+
+
+class UpdateProjectForm2(forms.Form):
 
     title = forms.CharField(
         label='',
@@ -65,8 +78,19 @@ class UpdateProjectForm(forms.Form):
         ),
     )
 
+    def __init__(self, user, *args, **kwargs):
+        super(UpdateProjectForm, self).__init__(*args, **kwargs)
+        self.user = user
 
-class CreateIssueForm(forms.ModelForm):
+    def save(self, commit=True):
+        project = super().save(commit=False)
+        project.modified_by = self.user
+        if commit:
+            project.save()
+        return project
+
+
+class IssueForm(forms.ModelForm):
 
     class Meta:
         model = Issue
@@ -93,12 +117,15 @@ class CreateIssueForm(forms.ModelForm):
         }
 
     def __init__(self, user, project, *args, **kwargs):
-        super(CreateIssueForm, self).__init__(*args, **kwargs)
+        super(IssueForm, self).__init__(*args, **kwargs)
         self.user = user
         self.project = project
         self.fields['title'].label = ''
         self.fields['priority'].label = ''
         self.fields['summary'].label = ''
+
+
+class CreateIssueForm(IssueForm):
 
     def save(self, commit=True):
         issue = super().save(commit=False)
@@ -110,7 +137,18 @@ class CreateIssueForm(forms.ModelForm):
         return issue
 
 
-class UpdateIssueForm(forms.Form):
+class UpdateIssueForm(IssueForm):
+
+    def save(self, commit=True):
+        issue = super().save(commit=False)
+        issue.project = self.project
+        issue.modified_by = self.user
+        if commit:
+            issue.save()
+        return issue
+
+
+class UpdateIssueForm2(forms.Form):
 
     title = forms.CharField(
         label='',
