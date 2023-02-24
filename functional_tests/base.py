@@ -31,3 +31,23 @@ class FunctionalTest(StaticLiveServerTestCase):
                         raise e
                     time.sleep(0.5)
         return modified_fn
+
+    @wait
+    def wait_for_element_name(self, name):
+        return self.browser.find_element(By.NAME, name)
+
+    @wait
+    def wait_for_element_class(self, name):
+        return self.browser.find_element(By.CLASS_NAME, name)
+
+    @wait
+    def wait_for_element_link(self, link):
+        return self.browser.find_element(By.LINK_TEXT, link)
+
+    @wait
+    def wait_for_element_id(self, id):
+        return self.browser.find_element(By.ID, id)
+
+    @wait
+    def wait_for_element_tag(self, tag):
+        return self.browser.find_element(By.TAG_NAME, tag)

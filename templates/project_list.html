@@ -4,4 +4,19 @@
 {% endblock %}
 
 {% block body_content %}
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2>Recent Projects</h2>
+      <ul class="project-list">
+        {% for project in project_list %}
+          <li class="project-list-item">
+            <h3><a href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h3>
+            <p>Created By: {{ project.created_by }}</p>
+            <p>Created on: {{ project.created_on }}</p>
+            <p>Last Modified: {{ project.modified_on }}</p>
+          <li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endblock %}

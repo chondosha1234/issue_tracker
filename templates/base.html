@@ -15,12 +15,24 @@
 
     <nav class="navbar navbar-dark bg-dark rounded" role="navigation">
       <div class="container-fluid">
-
+        <a class="navbar-brand" href="{% url 'issues:home' %}">Home</a>
+        <ul class="nav navbar-nav">
+          <li><a href="{% url 'issues:project_list' %}">Projects</a></li>
+          <li><a href="{% url 'issues:issue_list' %}">Issues</a></li>
+        </ul>
       </div>
     </nav>
-    
-    {% block body_content %}
-    {% endblock %}
+
+    <div class="row">
+      <div class="col-8">
+        {% block body_content %}
+        {% endblock %}
+      </div>
+      <div class="col-4">
+        {% block sidebar_content %}
+        {% endblock %}
+      </div>
+    </div>
 
   </div>
 

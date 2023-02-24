@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +8,7 @@ from issues.models import Issue, Project
 
 
 def home_page(request):
-    return render(request, 'issue_list.html')
+    return redirect('issues:issue_list')
 
 
 class IssueListView(ListView):
@@ -35,6 +35,14 @@ class IssueListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
         return context
+
+
+class IssueDetailView(DetailView):
+    model = Issue
+    template_name = 'issue_details.html'
+
+    def get_object(self):
+        return Issue.objects.get(pk=self.kwargs.get('issue_id'))
 
 
 class ProjectListView(ListView):
@@ -83,3 +91,18 @@ class ProjectDetailView(ListView):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['project'] = Project.objects.get(pk=self.kwargs.get('project_id'))
         return context
+
+
+@login_required(login_url='accounts:login')
+def create_issue(request, issue_id):
+    return render(request, 'create_issue.html')
+
+
+@login_required(login_url='accounts:login')
+def edit_issue(request, issue_id):
+    return render(request, 'edit_issue.html')
+
+
+@login_required(login_url='accounts:login')
+def delete_issue(request, issue_id):
+    return render(request, 'delete_issue.html')

@@ -4,4 +4,22 @@
 {% endblock %}
 
 {% block body_content %}
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2>Popular Issues</h2>
+      <ul class="issue-list">
+      {% for issue in issue_list %}
+        <li class="issue-list-item">
+          <h3><a href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h3>
+          <p> {{ issue.issue_status }}</p>
+          <p> {{ issue.priority }}</p>
+          <p> Project: {{ issue.project }}</p>
+          <p> Created By: {{ issue.created_by }}</p>
+          <p> Created: {{ issue.created_on }}</p>
+          <p> Modified: {{ issue.modified_on }}</p>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endblock %}
