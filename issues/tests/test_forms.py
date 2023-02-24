@@ -59,7 +59,7 @@ class UpdateProjectFormTest(TestCase):
         self.assertIn('placeholder="Enter a title"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
 
-    def test_form_changes_existing_project(self):
+    def test_update_form_changes_existing_project(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
         self.assertEquals(project.title, 'Test Project')
@@ -71,6 +71,22 @@ class UpdateProjectFormTest(TestCase):
         self.assertEquals(Project.objects.count(), 1)
         updated_project = Project.objects.get(pk=project.id)
         self.assertEquals(updated_project.title, 'Test')
+
+    def test_other_user_changes_modified_but_not_original_creator(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.assertEquals(project.created_by, user)
+        self.assertEquals(project.modified_by, user)
+
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        form = UpdateProjectForm(user=other_user, instance=project, data={
+            'title': 'Test',
+            'summary': 'Test project'
+        })
+        form.save()
+        updated_project = Project.objects.get(pk=project.id)
+        self.assertEquals(project.created_by, user)
+        self.assertEquals(project.modified_by, other_user)
 
 
 class CreateIssueFormTest(TestCase):
@@ -123,7 +139,7 @@ class UpdateIssueFormTest(TestCase):
         self.assertIn('placeholder="Enter a title"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
 
-    def test_form_changes_existing_issue(self):
+    def test_update_form_changes_existing_issue(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
         issue = Issue.objects.create(
@@ -141,5 +157,49 @@ class UpdateIssueFormTest(TestCase):
         })
         form.save()
         self.assertEquals(Issue.objects.count(), 1)
-        updated_project = Issue.objects.get(pk=issue.id)
-        self.assertEquals(updated_project.title, 'Test')
+        updated_issue = Issue.objects.get(pk=issue.id)
+        self.assertEquals(updated_issue.title, 'Test')
+
+    def test_update_form_changes_priority(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.assertEquals(issue.priority, 'Low')
+        form = UpdateIssueForm(user=user, project=project, instance=issue, data={
+            'title': 'Test',
+            'priority': 'HIGH',
+            'summary': 'Test project'
+        })
+        form.save()
+        updated_issue = Issue.objects.get(pk=issue.id)
+        self.assertEquals(updated_issue.priority, 'HIGH')
+
+    def test_update_changes_modified_but_not_original_creator(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.assertEquals(issue.created_by, user)
+        self.assertEquals(issue.modified_by, user)
+
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        form = UpdateIssueForm(user=other_user, project=project, instance=issue, data={
+            'title': 'Test',
+            'priority': 'LOW',
+            'summary': 'Test project'
+        })
+        form.save()
+        updated_issue = Issue.objects.get(pk=issue.id)
+        self.assertEquals(issue.created_by, user)
+        self.assertEquals(issue.modified_by, other_user)
