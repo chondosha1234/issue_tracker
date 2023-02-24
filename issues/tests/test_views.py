@@ -141,7 +141,7 @@ class IssueListTest(TestCase):
         self.assertEquals(response.context['issue_list'][0], issue1)
 
 
-class IssueDetail(TestCase):
+class IssueDetailTest(TestCase):
     pass
 
 
