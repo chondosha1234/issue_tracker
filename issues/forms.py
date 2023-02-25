@@ -56,40 +56,6 @@ class UpdateProjectForm(ProjectForm):
         return project
 
 
-class UpdateProjectForm2(forms.Form):
-
-    title = forms.CharField(
-        label='',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a title',
-            },
-        ),
-    )
-
-    summary = forms.CharField(
-        label='',
-        widget=forms.Textarea(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a description',
-            },
-        ),
-    )
-
-    def __init__(self, user, *args, **kwargs):
-        super(UpdateProjectForm, self).__init__(*args, **kwargs)
-        self.user = user
-
-    def save(self, commit=True):
-        project = super().save(commit=False)
-        project.modified_by = self.user
-        if commit:
-            project.save()
-        return project
-
-
 class IssueForm(forms.ModelForm):
 
     class Meta:
@@ -146,36 +112,3 @@ class UpdateIssueForm(IssueForm):
         if commit:
             issue.save()
         return issue
-
-
-class UpdateIssueForm2(forms.Form):
-
-    title = forms.CharField(
-        label='',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a title',
-            },
-        ),
-    )
-
-    priority = forms.MultipleChoiceField(
-        label='',
-        widget=forms.RadioSelect(
-            choices=PRIORITY_CHOICES,
-            attrs={
-                'class': 'form-control',
-            },
-        ),
-    )
-
-    summary = forms.CharField(
-        label='',
-        widget=forms.Textarea(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a description',
-            },
-        ),
-    )

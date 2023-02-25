@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from issues.forms import CreateProjectForm, CreateIssueForm, UpdateProjectForm, UpdateIssueForm
 from issues.models import Issue, Project
+from issues.forms import (
+    CreateProjectForm, CreateIssueForm,
+    UpdateProjectForm, UpdateIssueForm
+    )
 
 User = get_user_model()
 

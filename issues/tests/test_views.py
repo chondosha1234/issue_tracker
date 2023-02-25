@@ -4,6 +4,10 @@ from django.contrib.auth import get_user_model
 
 from issues.views import home_page, IssueListView
 from issues.models import Issue, Project
+from issues.forms import (
+    CreateProjectForm, CreateIssueForm,
+    UpdateProjectForm, UpdateIssueForm
+    )
 
 User = get_user_model()
 
@@ -292,7 +296,7 @@ class ProjectDetailViewTest(TestCase):
 
 class CreateProjectTest(TestCase):
 
-    def test_create_project_renders_correct_template(self):
+    def test_GET_create_project_renders_correct_template(self):
         self.client.force_login(
             User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
         )
@@ -300,44 +304,135 @@ class CreateProjectTest(TestCase):
         self.assertEquals(response.templates[0].name, 'create_project.html')
         self.assertTemplateUsed(response, 'create_project.html')
 
+    def test_POST_creates_new_project(self):
+        self.client.force_login(
+            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
+        )
+        self.assertEquals(Project.objects.count(), 0)
+        response = self.client.post('/create_project', data={
+            'title': 'Test',
+            'summary': 'This is a test'
+        })
+        self.assertEquals(Project.objects.count(), 1)
+
+    def test_POST_redirects_to_user_home(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        self.client.force_login(user)
+        response = self.client.post('/create_project', data={
+            'title': 'Test',
+            'summary': 'This is a test'
+        })
+        self.assertRedirects(response, f'/user_home/{user.pk}')
+
 
 class UpdateProjectTest(TestCase):
 
     def test_create_project_renders_correct_template(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
-        self.client.force_login(
-            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
-        )
+        self.client.force_login(user)
         response = self.client.get(f'/update_project/{project.id}')
         self.assertEquals(response.templates[0].name, 'update_project.html')
         self.assertTemplateUsed(response, 'update_project.html')
 
+    def test_POST_updates_existing_project(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        self.assertEquals(Project.objects.count(), 1)
+        self.assertEquals(project.title, 'Test Project')
+
+        response = self.client.post(f'/update_project/{project.id}', data={
+            'title': 'Test',
+            'summary': 'This is a test'
+        })
+        self.assertEquals(Project.objects.count(), 1)
+        updated_project = Project.objects.get(id=project.id)
+        self.assertEquals(updated_project.title, 'Test')
+
+    def test_POST_redirects_to_project_details(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        response = self.client.post(f'/update_project/{project.id}', data={
+            'title': 'Test',
+            'summary': 'This is a test'
+        })
+        self.assertRedirects(response, f'/project_details/{project.id}')
+
 
 class DeleteProjectTest(TestCase):
 
-    def test_create_project_renders_correct_template(self):
+    def test_succesful_POST_deletes_project(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
-        self.client.force_login(
-            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
-        )
-        response = self.client.get(f'/delete_project/{project.id}')
-        self.assertEquals(response.templates[0].name, 'delete_project.html')
-        self.assertTemplateUsed(response, 'delete_project.html')
+        self.client.force_login(user)
+        self.assertEquals(Project.objects.count(), 1)
+
+        response = self.client.post(f'/delete_project/{project.id}')
+        self.assertEquals(Project.objects.count(), 0)
+
+    def test_successful_POST_redirects_to_user_home(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+
+        response = self.client.post(f'/delete_project/{project.id}')
+        self.assertRedirects(response, f'/user_home/{user.pk}')
+
+    def test_other_user_cannot_delete_project(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(other_user)
+        self.assertEquals(Project.objects.count(), 1)
+
+        response = self.client.post(f'/delete_project/{project.id}')
+        self.assertEquals(Project.objects.count(), 1)
+
+    def test_unsuccessful_POST_redirects_to_project_details(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(other_user)
+
+        response = self.client.post(f'/delete_project/{project.id}')
+        self.assertRedirects(response, f'/project_details/{project.id}')
 
 
 class CreateIssueTest(TestCase):
 
-    def test_create_project_renders_correct_template(self):
+    def test_GET_create_project_renders_correct_template(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
-        self.client.force_login(
-            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
-        )
+        self.client.force_login(user)
         response = self.client.get(f'/create_issue/{project.id}')
         self.assertEquals(response.templates[0].name, 'create_issue.html')
         self.assertTemplateUsed(response, 'create_issue.html')
+
+    def test_POST_creates_new_issue(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        self.assertEquals(Issue.objects.count(), 0)
+        response = self.client.post(f'/create_issue/{project.id}', data={
+            'title': 'Test',
+            'priority': 'LOW',
+            'summary': 'This is a test'
+        })
+        self.assertEquals(Issue.objects.count(), 1)
+
+    def test_POST_redirects_to_project_details(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+
+        response = self.client.post(f'/create_issue/{project.id}', data={
+            'title': 'Test',
+            'priority': 'LOW',
+            'summary': 'This is a test'
+        })
+        self.assertRedirects(response, f'/project_details/{project.id}')
 
 
 class UpdateIssueTest(TestCase):
@@ -352,17 +447,57 @@ class UpdateIssueTest(TestCase):
             created_by=user,
             modified_by=user,
         )
-        self.client.force_login(
-            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
-        )
+        self.client.force_login(user)
         response = self.client.get(f'/update_issue/{issue.id}')
         self.assertEquals(response.templates[0].name, 'update_issue.html')
         self.assertTemplateUsed(response, 'update_issue.html')
 
+    def test_POST_changes_existing_issue(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        self.assertEquals(Issue.objects.count(), 1)
+        self.assertEquals(issue.title, 'Test')
+
+        response = self.client.post(f'/update_issue/{issue.id}', data={
+            'title': 'Test Issue',
+            'priority': 'LOW',
+            'summary': 'This is a test'
+        })
+        self.assertEquals(Issue.objects.count(), 1)
+        updated_issue = Issue.objects.get(id=issue.id)
+        self.assertEquals(updated_issue.title, 'Test Issue')
+
+    def test_POST_redirects_to_issue_detail(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(f'/update_issue/{issue.id}', data={
+            'title': 'Test Issue',
+            'priority': 'LOW',
+            'summary': 'This is a test'
+        })
+        self.assertRedirects(response, f'/issue_details/{issue.id}')
+
 
 class DeleteIssueTest(TestCase):
 
-    def test_create_project_renders_correct_template(self):
+    def test_succesful_POST_deletes_issue(self):
         user = User.objects.create(email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
         issue = Issue.objects.create(
@@ -372,9 +507,56 @@ class DeleteIssueTest(TestCase):
             created_by=user,
             modified_by=user,
         )
-        self.client.force_login(
-            User.objects.get_or_create(email="user1234@example.org", password="chondosha5563")[0]
+        self.client.force_login(user)
+        self.assertEquals(Issue.objects.count(), 1)
+
+        response = self.client.post(f'/delete_issue/{issue.id}')
+        self.assertEquals(Issue.objects.count(), 0)
+
+    def test_successful_POST_redirects_to_project_details(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
         )
-        response = self.client.get(f'/delete_issue/{issue.id}')
-        self.assertEquals(response.templates[0].name, 'delete_issue.html')
-        self.assertTemplateUsed(response, 'delete_issue.html')
+        self.client.force_login(user)
+
+        response = self.client.post(f'/delete_issue/{issue.id}')
+        self.assertRedirects(response, f'/project_details/{project.id}')
+
+    def test_other_user_cannot_delete_issue(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(other_user)
+        self.assertEquals(Issue.objects.count(), 1)
+
+        response = self.client.post(f'/delete_issue/{issue.id}')
+        self.assertEquals(Issue.objects.count(), 1)
+
+    def test_unsuccessful_POST_redirects_to_issue_details(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        other_user = User.objects.create(email="other_user@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(other_user)
+
+        response = self.client.post(f'/delete_issue/{issue.id}')
+        self.assertRedirects(response, f'/issue_details/{issue.id}')

@@ -6,6 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
 from issues.models import Issue, Project
+from issues.forms import (
+    CreateProjectForm, CreateIssueForm,
+    UpdateProjectForm, UpdateIssueForm
+    )
 
 User = get_user_model()
 
@@ -15,7 +19,11 @@ def home_page(request):
 
 
 class UserHome(DetailView):
-    pass
+    model = User
+    template_name = 'user_home.html'
+
+    def get_object(self):
+        return User.objects.get(pk=self.kwargs.get('user_id'))
 
 
 class UserProfile(DetailView):
@@ -106,29 +114,90 @@ class ProjectDetailView(ListView):
 
 @login_required(login_url='accounts:login')
 def create_project(request):
-    return render(request, 'create_project.html')
+    user = request.user
+    form = CreateProjectForm(user=user)
+    if request.method == 'POST':
+        form = CreateProjectForm(data=request.POST, user=user)
+        if form.is_valid():
+            form.save()
+            return redirect('issues:user_home', user_id=user.pk)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'create_project.html', context)
 
 
 @login_required(login_url='accounts:login')
 def update_project(request, project_id):
+    user = request.user
+    project = Project.objects.get(id=project_id)
+    form = UpdateProjectForm(user=user, instance=project)
+    if request.method == 'POST':
+        form = UpdateProjectForm(data=request.POST, user=user, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('issues:project_details', project_id=project.id)
+
+    context = {
+        'form': form,
+    }
     return render(request, 'update_project.html')
 
 
 @login_required(login_url='accounts:login')
 def delete_project(request, project_id):
-    return render(request, 'delete_project.html')
+    user = request.user
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        if project.created_by == user:
+            project.delete()
+            return redirect('issues:user_home', user_id=user.pk)
+
+    return redirect('issues:project_details', project_id=project_id)
 
 
 @login_required(login_url='accounts:login')
 def create_issue(request, project_id):
-    return render(request, 'create_issue.html')
+    user = request.user
+    project = Project.objects.get(id=project_id)
+    form = CreateIssueForm(user=user, project=project)
+    if request.method == 'POST':
+        form = CreateIssueForm(data=request.POST, user=user, project=project)
+        if form.is_valid():
+            form.save()
+            return redirect('issues:project_details', project_id=project.id)
+    context = {
+        'form': form
+    }
+    return render(request, 'create_issue.html', context)
 
 
 @login_required(login_url='accounts:login')
 def update_issue(request, issue_id):
+    user = request.user
+    issue = Issue.objects.get(id=issue_id)
+    project = issue.project
+    form = UpdateIssueForm(user=user, project=project, instance=issue)
+    if request.method == 'POST':
+        form = UpdateIssueForm(data=request.POST, user=user, project=project, instance=issue)
+        if form.is_valid():
+            form.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+    context = {
+        'form': form
+    }
     return render(request, 'update_issue.html')
 
 
 @login_required(login_url='accounts:login')
 def delete_issue(request, issue_id):
-    return render(request, 'delete_issue.html')
+    user = request.user
+    issue = Issue.objects.get(id=issue_id)
+    project = issue.project 
+    if request.method == 'POST':
+        if issue.created_by == user:
+            issue.delete()
+            return redirect('issues:project_details', project_id=project.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
