@@ -32,6 +32,15 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertRedirects(response, '/issue_list')
 
+class UserHomeTest(TestCase):
+
+    def test_view_renders_user_home_template(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        self.client.force_login(user)
+        response = self.client.get(f'/user_home/{user.pk}')
+        self.assertEquals(response.templates[0].name, 'user_home.html')
+        self.assertTemplateUsed(response, 'user_home.html')
+
 
 class IssueListTest(TestCase):
 

@@ -22,6 +22,11 @@ class UserHome(DetailView):
     model = User
     template_name = 'user_home.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(UserHome, self).get_context_data(**kwargs)
+        context['project_list'] = Project.objects.filter(created_by=self.request.user)
+        return context
+
     def get_object(self):
         return User.objects.get(pk=self.kwargs.get('user_id'))
 
@@ -141,8 +146,9 @@ def update_project(request, project_id):
 
     context = {
         'form': form,
+        'project': project
     }
-    return render(request, 'update_project.html')
+    return render(request, 'update_project.html', context)
 
 
 @login_required(login_url='accounts:login')
@@ -168,7 +174,8 @@ def create_issue(request, project_id):
             form.save()
             return redirect('issues:project_details', project_id=project.id)
     context = {
-        'form': form
+        'form': form,
+        'project': project
     }
     return render(request, 'create_issue.html', context)
 
@@ -185,16 +192,17 @@ def update_issue(request, issue_id):
             form.save()
             return redirect('issues:issue_details', issue_id=issue.id)
     context = {
-        'form': form
+        'form': form,
+        'issue': issue
     }
-    return render(request, 'update_issue.html')
+    return render(request, 'update_issue.html', context)
 
 
 @login_required(login_url='accounts:login')
 def delete_issue(request, issue_id):
     user = request.user
     issue = Issue.objects.get(id=issue_id)
-    project = issue.project 
+    project = issue.project
     if request.method == 'POST':
         if issue.created_by == user:
             issue.delete()

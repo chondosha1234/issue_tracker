@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block body_content %}
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="user-info">
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="user-projects">
+        {% for project in project_list %}
+          <li class="project-list-item">
+            <h3><a href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h3>
+            <p>Created on: {{ project.created_on }}</p>
+            <p>Last Modified: {{ project.modified_on }}</p>
+          <li>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="col-md-3 offset-md-2">
+        <a class="btn btn-info right mr-2" href="{% url 'issues:create_project' %}">Create Project</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

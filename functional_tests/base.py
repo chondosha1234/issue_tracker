@@ -63,3 +63,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     @wait
     def wait_for_element_tag(self, tag):
         return self.browser.find_element(By.TAG_NAME, tag)
+
+    @wait
+    def wait_for_element_selector(self, selector):
+        return self.browser.find_element(By.CSS_SELECTOR, selector)
