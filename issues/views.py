@@ -117,7 +117,7 @@ class ProjectDetailView(ListView):
         return context
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def create_project(request):
     user = request.user
     form = CreateProjectForm(user=user)
@@ -133,7 +133,7 @@ def create_project(request):
     return render(request, 'create_project.html', context)
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def update_project(request, project_id):
     user = request.user
     project = Project.objects.get(id=project_id)
@@ -151,7 +151,7 @@ def update_project(request, project_id):
     return render(request, 'update_project.html', context)
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def delete_project(request, project_id):
     user = request.user
     project = Project.objects.get(id=project_id)
@@ -163,7 +163,7 @@ def delete_project(request, project_id):
     return redirect('issues:project_details', project_id=project_id)
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def create_issue(request, project_id):
     user = request.user
     project = Project.objects.get(id=project_id)
@@ -180,7 +180,7 @@ def create_issue(request, project_id):
     return render(request, 'create_issue.html', context)
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def update_issue(request, issue_id):
     user = request.user
     issue = Issue.objects.get(id=issue_id)
@@ -198,7 +198,7 @@ def update_issue(request, issue_id):
     return render(request, 'update_issue.html', context)
 
 
-@login_required(login_url='accounts:login')
+@login_required(login_url='login')
 def delete_issue(request, issue_id):
     user = request.user
     issue = Issue.objects.get(id=issue_id)

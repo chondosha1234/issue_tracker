@@ -41,6 +41,7 @@ class LoginView(View):
         }
         return render(request, self.template_name, context)
 
+
 class CreateAccountView(View):
     template_name = "create_account.html"
     form_class = CreateAccountForm
@@ -56,5 +57,5 @@ class CreateAccountView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect('accounts:login')
-        return redirect('accounts:create_account')
+            return redirect('login')
+        return redirect('create_account')

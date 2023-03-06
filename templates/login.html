@@ -7,7 +7,7 @@
 {% block body_content %}
   <br>
   <div class="row">
-    <form action="{% url 'accounts:login' %}" method="post">
+    <form action="{% url 'login' %}" method="post">
       {% csrf_token %}
       <div class="form-outline mb-4">
           {{ form.email }}
@@ -21,7 +21,7 @@
     </form>
 
     <div class="text-center">
-      <p> Not a member? <a href="{% url 'accounts:create_account' %}">Create New Account</a></p>
+      <p> Not a member? <a href="{% url 'create_account' %}">Create New Account</a></p>
     </div>
   </div>
 {% endblock %}

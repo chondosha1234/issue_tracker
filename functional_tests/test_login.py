@@ -62,7 +62,7 @@ class LoginTest(FunctionalTest):
 
         # User presses submit button and is redirected to Login page
         if self.staging_server:
-            self.browser.get(self.live_server_url + reverse('accounts:login'))
+            self.browser.get(self.live_server_url + reverse('login'))
         else:
             time.sleep(2)  # need to wait
             current_page_url = self.browser.current_url
