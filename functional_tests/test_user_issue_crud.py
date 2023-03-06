@@ -29,7 +29,7 @@ class TestUserCRUD(FunctionalTest):
         submit_btn = self.wait_for_element_selector('.btn')
 
         # they enter information to make a new project and hit submit
-        title.send_keys('Test Project')
+        title.send_keys('Test')
         summary.send_keys('This is a test project')
         submit_btn.click()
 
@@ -37,11 +37,29 @@ class TestUserCRUD(FunctionalTest):
         # on their profile
         time.sleep(1)
         self.assertRegex(self.browser.current_url, '/user_home')
-        project_title_link = self.wait_for_element_link('Test Project')
+        project_title_link = self.wait_for_element_link('Test')
 
         # they click on the project and are linked to their project detail page
         project_title_link.click()
         self.assertRegex(self.browser.current_url, '/project_details/1')
+
+        # they see button to update project and press it
+        update_project_btn = self.wait_for_element_link('Update Project')
+        update_project_btn.click()
+        # they change 'Test' to 'Test Project' and hit submit
+        title = self.wait_for_element_name('title')
+        summary = self.wait_for_element_name('summary')
+        submit_btn = self.wait_for_element_selector('.btn')
+
+        title.clear()
+        title.send_keys('Test Project')
+        submit_btn.click()
+
+        # project title is changed and the summary is the same
+        project_title = self.wait_for_element_tag('h3').text
+        self.assertIn('Test Project', project_title)
+        project_summary = self.wait_for_element_tag('h6').text
+        self.assertIn('This is a test project', project_summary)
 
         # they see a button to add an issue to project (because they are the owner/creator)
         create_issue_btn = self.wait_for_element_link('Create Issue')
@@ -121,7 +139,8 @@ class TestUserCRUD(FunctionalTest):
         time.sleep(1)
         self.assertRegex(self.browser.current_url, '/project_details/1')
         with self.assertRaises(NoSuchElementException):
-            self.wait_for_element_link('Changed Test Issue')
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Changed Test Issue')
 
         # they return to project detail page and see button for delete project
         delete_project_btn = self.wait_for_element_id('delete-btn')
@@ -136,6 +155,65 @@ class TestUserCRUD(FunctionalTest):
         time.sleep(1)
         self.assertRegex(self.browser.current_url, '/user_home')
         with self.assertRaises(NoSuchElementException):
-            self.wait_for_element_link('Test Project')
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Test Project')
+
+        # create new project and issue
+        self.browser.get(self.live_server_url + reverse('issues:user_home', args=[user.pk]))
+        new_project_btn = self.wait_for_element_link('Create Project')
+
+        new_project_btn.click()
+        self.assertRegex(self.browser.current_url, '/create_project')
+        title = self.wait_for_element_name('title')
+        summary = self.wait_for_element_name('summary')
+        submit_btn = self.wait_for_element_selector('.btn')
+
+        title.send_keys('Test Project')
+        summary.send_keys('This is a test project')
+        submit_btn.click()
+
+        project_title_link = self.wait_for_element_link('Test Project')
+        project_title_link.click()
+
+        create_issue_btn = self.wait_for_element_link('Create Issue')
+        create_issue_btn.click()
+
+        title = self.wait_for_element_name('title')
+        priority = self.wait_for_element_id('id_priority_2')
+        summary = self.wait_for_element_name('summary')
+        submit_btn = self.wait_for_element_selector('.btn')
+
+        title.send_keys('Test Issue')
+        summary.send_keys('This is a test issue')
+        priority.click()
+        submit_btn.click()
 
         # check if different user can't see buttons
+        self.wait_for_element_link('Log out').click()
+        self.wait_for_element_link('Projects').click()
+
+        project_title_link = self.wait_for_element_link('Test Project')
+        project_title_link.click()
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Create Issue')
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Update Project')
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Delete Project')
+
+        issue_title_link = self.wait_for_element_link('Test Issue')
+        issue_title_link.click()
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Update Issue')
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'Delete Issue')

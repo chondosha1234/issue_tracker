@@ -7,8 +7,8 @@
 <div class="row">
   <div class="col-md-8 offset-md-2">
     <div class="project-description">
-        <h2>{{ project.title }}</h2>
-        <p>{{ project.summary }}</p>
+        <h3>{{ project.title }}</h3>
+        <h6>{{ project.summary }}</h6>
 
         <ul class='issue-list'>
           {% for issue in issue_list %}
@@ -26,7 +26,11 @@
   </div>
 </div>
 
+{% if user == project.created_by %}
 <div class="row">
+  <div class="col-md-3 offset-md-2">
+    <a class="btn btn-info right mr-2" href="{% url 'issues:update_project' project.id %}">Update Project</a>
+  </div>
   <div class="col-md-3 offset-md-2">
     <a class="btn btn-info right mr-2" href="{% url 'issues:create_issue' project.id %}">Create Issue</a>
   </div>
@@ -37,4 +41,5 @@
     </form>
   </div>
 </div>
+{% endif %}
 {% endblock %}

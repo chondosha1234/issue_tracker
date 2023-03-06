@@ -21,6 +21,7 @@
     </div>
   </div>
 
+  {% if user == issue.created_by %}
   <div class="row">
     <div class="col-md-3 offset-md-2">
       <a class="btn btn-info right mr-2" href="{% url 'issues:update_issue' issue.project.id %}">Update Issue</a>
@@ -32,5 +33,6 @@
       </form>
     </div>
   </div>
+  {% endif %}
 
 {% endblock %}
