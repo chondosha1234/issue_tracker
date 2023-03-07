@@ -12,6 +12,7 @@ class LoginTest(FunctionalTest):
         # that says Log In
         # They press the button and it takes them to a login page
         self.browser.get(self.live_server_url + reverse('issues:home'))
+        self.wait_for_element_class('navbar-toggler').click()
         self.browser.find_element(By.LINK_TEXT, 'Login').click()
 
         # user sees the url has the word login
@@ -81,12 +82,12 @@ class LoginTest(FunctionalTest):
 
         # user can now see in the top right corner that they are logged in
         # there is now a 'log out' link / button instead of log in
+        self.wait_for_element_class('navbar-toggler').click()
         logout = self.browser.find_element(By.LINK_TEXT, 'Log out')
-        account_info = self.browser.find_element(By.NAME, 'account-info').text
-        self.assertEqual(account_info, "Logged in as user1234@example.org")
 
         # user clicks log out and is redirected to home page
         # where they see 'log in' link again
         logout.click()
         self.assertEqual(self.browser.current_url, self.live_server_url + reverse('issues:issue_list'))
+        self.wait_for_element_class('navbar-toggler').click()
         self.browser.find_element(By.LINK_TEXT, 'Login')

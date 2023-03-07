@@ -10,6 +10,7 @@ from .base import FunctionalTest
 User = get_user_model()
 
 class TestUserCRUD(FunctionalTest):
+    reset_sequences = True
 
     def test_user_create_update_and_delete_project_and_issue(self):
 
@@ -189,7 +190,9 @@ class TestUserCRUD(FunctionalTest):
         submit_btn.click()
 
         # check if different user can't see buttons
+        self.wait_for_element_class('navbar-toggler').click()
         self.wait_for_element_link('Log out').click()
+        self.wait_for_element_class('navbar-toggler').click()
         self.wait_for_element_link('Projects').click()
 
         project_title_link = self.wait_for_element_link('Test Project')

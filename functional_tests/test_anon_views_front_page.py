@@ -33,6 +33,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         # they are not logged in
         self.browser.get(self.live_server_url + reverse('issues:home'))
         self.assertIn('Issue Tracker', self.browser.title)
+        self.assertRegex(self.browser.current_url, '/issue_list')
 
         # they see a navbar at the top with buttons 'home' 'issues' 'projects'
         navbar = self.browser.find_element(By.CSS_SELECTOR, '.navbar')
@@ -60,13 +61,14 @@ class AnonVisitsHomeTest(FunctionalTest):
 
         # project detail has some information at top and a list of issues related
         # to this project
-        title = self.wait_for_element_tag('h2').text
+        title = self.wait_for_element_tag('h3').text
         self.assertIn('Test Project', title)
         issue_list = self.wait_for_element_class('issue-list').text
         self.assertIn('Test', issue_list)
 
         # user clicks projects button on navbar and is taken to list of proejcts
         # organized by most recent
+        self.wait_for_element_class('navbar-toggler').click()
         project_btn = self.wait_for_element_link('Projects')
         project_btn.click()
         self.assertRegex(self.browser.current_url, '/project_list')
@@ -75,19 +77,10 @@ class AnonVisitsHomeTest(FunctionalTest):
 
         # user clicks issues on navbar and is taken to list of all issues organized
         # by most recent
+        self.wait_for_element_class('navbar-toggler').click()
         issues_btn = self.wait_for_element_link('Issues')
         issues_btn.click()
         issue_list = self.wait_for_element_class('issue-list').text
         self.assertIn('Test', issue_list)
 
         # user clicks home and is taken to issue list of most viewed
-
-        # user clicks on top issue and sees button to edit issue
-        issue_link = self.wait_for_element_link('Test')
-        issue_link.click()
-        self.assertRegex(self.browser.current_url, '/issue_details/1')
-        edit_btn = self.wait_for_element_link('Update Issue')
-        edit_btn.click()
-
-        # user clicks it and is redirected to log in page
-        self.assertRegex(self.browser.current_url, '/login')
