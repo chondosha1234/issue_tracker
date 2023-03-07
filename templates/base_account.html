@@ -44,16 +44,8 @@
       </div>
     </nav>
 
-    <div class="row">
-      <div class="col-8">
-        {% block body_content %}
-        {% endblock %}
-      </div>
-      <div class="col-4">
-        {% block sidebar_content %}
-        {% endblock %}
-      </div>
-    </div>
+    {% block page_content %}
+    {% endblock %}
 
   </div>
 

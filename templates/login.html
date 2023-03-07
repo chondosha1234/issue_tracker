@@ -1,12 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'base_account.html' %}
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'accounts_style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'account_styling.css' %}" />
 {% endblock %}
 
-{% block body_content %}
+{% block page_content %}
   <br>
   <div class="row">
+    <div class="login-container">
     <form action="{% url 'login' %}" method="post">
       {% csrf_token %}
       <div class="form-outline mb-4">
@@ -23,5 +24,6 @@
     <div class="text-center">
       <p> Not a member? <a href="{% url 'create_account' %}">Create New Account</a></p>
     </div>
+  </div>
   </div>
 {% endblock %}
