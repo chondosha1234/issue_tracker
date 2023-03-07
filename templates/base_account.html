@@ -32,7 +32,7 @@
             <li class="nav-item">
               <a class="nav-link-active" aria-current="page" href="{% url 'issues:issue_list' %}">Issues</a>
             </li>
-            <li>
+            <li class="nav-item">
               {% if user.email %}
               <a class="nav-link-active" href="{% url 'logout' %}">Log out</a>
               {% else %}
