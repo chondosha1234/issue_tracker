@@ -5,15 +5,17 @@
 
 {% block body_content %}
   <div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-11 offset-md-1">
+      <br>
       <h2>Recent Projects</h2>
-      <ul class="project-list">
+      <ul class="list-group list-group-flush">
         {% for project in project_list %}
-          <li class="project-list-item">
-            <h3><a href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h3>
-            <p>Created By: {{ project.created_by }}</p>
-            <p>Created on: {{ project.created_on }}</p>
-            <p>Last Modified: {{ project.modified_on }}</p>
+          <li class="list-group-item">
+            <h4><a class="item-title" href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h4>
+            <div class="item-dates">
+              <p>Created By: {{ project.created_by }} -- {{ project.created_on }}</p>
+              <p>Last Updated: {{ project.modified_on }}</p>
+            </div>
           <li>
         {% endfor %}
       </ul>

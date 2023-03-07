@@ -41,23 +41,35 @@ body {
   color: #ffffff;
 }
 
-.issue-title {
+.item-title {
   text-decoration: none;
   color: #ffffff;
 }
 
-.issue-title:hover {
+.item-title:hover {
   color: #ed4245;
 }
 
-.issue-title:visited {
+.item-title:visited {
 
 }
 
-.issue-item-info {
+.item-info {
   font-size: 14px;
 }
 
-.issue-item-dates {
+.item-dates {
   font-size: 12px;
+}
+
+.btn {
+  background-color: #D73A49 !important;
+  color: #ffffff !important;
+  border: 1px solid black;
+  text-shadow: 1px 1px black;
+}
+
+.btn:hover {
+  border: 1px solid #D73A49;
+  box-shadow: 0 0 5px #D73A49;
 }

@@ -11,14 +11,14 @@
       <ul class="list-group list-group-flush">
       {% for issue in issue_list %}
         <li class="list-group-item">
-          <h4><a class="issue-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>
-          <div class="issue-item-info">
+          <h4><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>
+          <div class="item-info">
             <p> Project: {{ issue.project }}</p>
             <p> {{ issue.issue_status }} &nbsp; &nbsp; &nbsp; {{ issue.priority }}</p>
           </div>
-          <div class="issue-item-dates">
+          <div class="item-dates">
             <p> Created By: {{ issue.created_by }} -- {{ issue.created_on }}</p>
-            <p> Modified By: {{ issue.modified_by }} -- {{ issue.modified_on }}</p>
+            <p> Last Updated: {{ issue.modified_on }}</p>
           </div>
         </li>
       {% endfor %}
