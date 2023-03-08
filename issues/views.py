@@ -35,6 +35,7 @@ def search(request):
         'search_form': form,
         'results': results,
     }
+    print(results)
     return render(request, 'search.html', context)
 
 

@@ -9,7 +9,16 @@ PRIORITY_CHOICES = [
 
 
 class SearchForm(forms.Form):
-    search_query = forms.CharField(max_length=64)
+    search_query = forms.CharField(
+        label="",
+        max_length=64,
+        widget=forms.TextInput(
+        attrs={
+                'class': 'form-control',
+                'placeholder': 'Search...'
+            },
+        ),
+    )
 
 
 class ProjectForm(forms.ModelForm):

@@ -12,14 +12,14 @@
     <ul class="list-group list-group-flush">
       {% for item in results %}
        <li class="list-group-item">
-        {% if instance|is_instance:Project %}
+        {% if item|is_instance:"Project" %}
           <h4><a class="item-title" href="{% url 'issues:project_details' item.id %}">{{ item.title }}</a></h4>
           <div class="item-dates">
             <p>Created By: {{ item.created_by }} -- {{ item.created_on }}</p>
             <p>Last Updated: {{ item.modified_on }}</p>
           </div>
         {% endif %}
-        {% if instance|is_instance:Issue %}
+        {% if item|is_instance:"Issue" %}
           <h4><a class="item-title" href="{% url 'issues:issue_details' item.id %}">{{ item.title }}</a></h4>
           <div class="item-info">
             <p> Project: {{ item.project }}</p>
@@ -30,7 +30,7 @@
             <p> Last Updated: {{ item.modified_on }}</p>
           </div>
         {% endif %}
-        {% if instance|is_instance:User %}
+        {% if item|is_instance:"User" %}
           <h4><a class="item-title" href="{% url 'issues:user_profile' item.pk %}">{{ item.email }}</a></h4>
           <div class="item-info">
             <p>Date Joined: {{ item.date_joined }}
