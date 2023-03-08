@@ -32,6 +32,126 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertRedirects(response, '/issue_list')
 
+
+class SearchTest(TestCase):
+
+    def create_test_project(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        project = Project.objects.create(
+            title='Test Project',
+            summary='This is a test project',
+            created_by=user,
+            modified_by=user
+        )
+        return project
+
+    def test_view_renders_search_template(self):
+        response = self.client.get('/search', data={'search_query': 'Test'})
+        self.assertEquals(response.templates[0].name, 'search.html')
+        self.assertTemplateUsed(response, 'search.html')
+
+    def test_search_returns_correct_project(self):
+        project = self.create_test_project()
+        response = self.client.get('/search', data={'search_query': 'Test Project'})
+        self.assertEquals(response.context['results'][0], project)
+
+    def test_search_returns_correct_issue(self):
+         project = self.create_test_project()
+         user = User.objects.get(email='user1234@example.org')
+         issue = Issue.objects.create(
+             title='Test Issue',
+             project=project,
+             summary='This is a test issue',
+             created_by=user,
+             modified_by=user,
+         )
+         response = self.client.get('/search', data={'search_query': 'Test Issue'})
+         self.assertEquals(response.context['results'][0], issue)
+
+    def test_search_returns_correct_user(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        response = self.client.get('/search', data={'search_query': 'user1234@example.org'})
+        self.assertEquals(response.context['results'][0], user)
+
+    def test_search_does_not_return_incorrect_issue(self):
+        project = self.create_test_project()
+        user = User.objects.get(email='user1234@example.org')
+        issue = Issue.objects.create(
+            title='Test Issue',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        other_issue = Issue.objects.create(
+            title='Other Issue',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        response = self.client.get('/search', data={'search_query': 'Test Issue'})
+        self.assertEquals(len(response.context['results']), 1)
+
+    def test_search_does_not_return_incorrect_project(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        project = Project.objects.create(
+            title='Test Project',
+            summary='This is a test project',
+            created_by=user,
+            modified_by=user
+        )
+        other_project = Project.objects.create(
+            title='Other Project',
+            summary='This is a test project',
+            created_by=user,
+            modified_by=user
+        )
+        response = self.client.get('/search', data={'search_query': 'Test Project'})
+        self.assertEquals(len(response.context['results']), 1)
+
+    def test_search_does_not_return_incorrect_user(self):
+        user = User.objects.create(email='user1234@example.org', password='chondosha5563')
+        other_user = User.objects.create(email='otheruser@example.org', password='chondosha5563')
+        response = self.client.get('/search', data={'search_query': 'user1234@example.org'})
+        self.assertEquals(len(response.context['results']), 1)
+
+    def test_search_returns_both_issues_and_projects(self):
+        project = self.create_test_project()
+        user = User.objects.get(email='user1234@example.org')
+        issue = Issue.objects.create(
+            title='Test Project',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        response = self.client.get('/search', data={'search_query': 'Test Project'})
+        self.assertEquals(len(response.context['results']), 2)
+        self.assertEquals(response.context['results'][0], project)
+        self.assertEquals(response.context['results'][1], issue)
+
+    def test_partial_search_returns_results(self):
+        project = self.create_test_project()
+        response = self.client.get('/search', data={'search_query': 'Test'})
+        self.assertEquals(response.context['results'][0], project)
+
+    def test_partial_search_returns_issue_and_project(self):
+        project = self.create_test_project()
+        user = User.objects.get(email='user1234@example.org')
+        issue = Issue.objects.create(
+            title='Test Issue',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        response = self.client.get('/search', data={'search_query': 'Test'})
+        self.assertEquals(len(response.context['results']), 2)
+        self.assertEquals(response.context['results'][0], project)
+        self.assertEquals(response.context['results'][1], issue)
+
+
 class UserHomeTest(TestCase):
 
     def test_view_renders_user_home_template(self):
@@ -40,6 +160,14 @@ class UserHomeTest(TestCase):
         response = self.client.get(f'/user_home/{user.pk}')
         self.assertEquals(response.templates[0].name, 'user_home.html')
         self.assertTemplateUsed(response, 'user_home.html')
+
+
+class UserProfileTest(TestCase):
+    pass
+
+
+class UserListTest(TestCase):
+    pass
 
 
 class IssueListTest(TestCase):

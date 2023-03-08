@@ -8,7 +8,8 @@ from django.contrib.auth import get_user_model
 from issues.models import Issue, Project
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
-    UpdateProjectForm, UpdateIssueForm
+    UpdateProjectForm, UpdateIssueForm,
+    SearchForm
     )
 
 User = get_user_model()
@@ -16,6 +17,25 @@ User = get_user_model()
 
 def home_page(request):
     return redirect('issues:issue_list')
+
+
+def search(request):
+    form = SearchForm()
+    results = []
+
+    if request.method == 'GET':
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            search_query = form.cleaned_data['search_query']
+            results.extend(Project.objects.filter(title__icontains=search_query))
+            results.extend(Issue.objects.filter(title__icontains=search_query))
+            results.extend(User.objects.filter(email__icontains=search_query))
+
+    context = {
+        'search_form': form,
+        'results': results,
+    }
+    return render(request, 'search.html', context)
 
 
 class UserHome(DetailView):
@@ -58,6 +78,7 @@ class IssueListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
+        context['search_form'] = SearchForm()
         return context
 
 
@@ -67,6 +88,11 @@ class IssueDetailView(DetailView):
 
     def get_object(self):
         return Issue.objects.get(pk=self.kwargs.get('issue_id'))
+
+    def get_context_data(self, **kwargs):
+        context = super(IssueDetailView, self).get_context_data(**kwargs)
+        context['search_form'] = SearchForm()
+        return context
 
 
 class ProjectListView(ListView):
@@ -88,6 +114,7 @@ class ProjectListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
+        context['search_form'] = SearchForm()
         return context
 
 
@@ -114,6 +141,7 @@ class ProjectDetailView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
         context['project'] = Project.objects.get(pk=self.kwargs.get('project_id'))
+        context['search_form'] = SearchForm()
         return context
 
 

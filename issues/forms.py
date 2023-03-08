@@ -8,6 +8,10 @@ PRIORITY_CHOICES = [
 ]
 
 
+class SearchForm(forms.Form):
+    search_query = forms.CharField(max_length=64)
+
+
 class ProjectForm(forms.ModelForm):
 
     class Meta:

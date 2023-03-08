@@ -45,6 +45,17 @@
     </nav>
 
     <div class="row">
+      <div class="col-4">
+        {% if search_form %}
+          <form action="{% url 'issues:search' %}" method="get">
+            {{ search_form.as_p }}
+            <button class='btn' type="submit">Search</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-8">
         {% block body_content %}
         {% endblock %}

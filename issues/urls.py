@@ -5,6 +5,7 @@ app_name="issues"
 
 urlpatterns = [
     path('', views.home_page, name='home'),
+    path('search', views.search, name='search'),
     path('issue_list', views.IssueListView.as_view(), name='issue_list'),
     path('issue_list/<filter_term>', views.IssueListView.as_view(), name='issue_list'),
     path('issue_details/<issue_id>', views.IssueDetailView.as_view(), name='issue_details'),

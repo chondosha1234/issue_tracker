@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load filters %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block body_content %}
+<div class="row">
+  <div class="col-md-11 offset-md-1">
+    <br>
+    <h3>Search Results: </h3>
+    <ul class="list-group list-group-flush">
+      {% for item in results %}
+       <li class="list-group-item">
+        {% if instance|is_instance:Project %}
+          <h4><a class="item-title" href="{% url 'issues:project_details' item.id %}">{{ item.title }}</a></h4>
+          <div class="item-dates">
+            <p>Created By: {{ item.created_by }} -- {{ item.created_on }}</p>
+            <p>Last Updated: {{ item.modified_on }}</p>
+          </div>
+        {% endif %}
+        {% if instance|is_instance:Issue %}
+          <h4><a class="item-title" href="{% url 'issues:issue_details' item.id %}">{{ item.title }}</a></h4>
+          <div class="item-info">
+            <p> Project: {{ item.project }}</p>
+            <p> {{ item.issue_status }} &nbsp; &nbsp; &nbsp; {{ item.priority }}</p>
+          </div>
+          <div class="item-dates">
+            <p> Created By: {{ item.created_by }} -- {{ item.created_on }}</p>
+            <p> Last Updated: {{ item.modified_on }}</p>
+          </div>
+        {% endif %}
+        {% if instance|is_instance:User %}
+          <h4><a class="item-title" href="{% url 'issues:user_profile' item.pk %}">{{ item.email }}</a></h4>
+          <div class="item-info">
+            <p>Date Joined: {{ item.date_joined }}
+          </div>
+        {% endif %}
+       </li>
+      {% endfor %}
+  </div>
+</div>
+{% endblock %}
