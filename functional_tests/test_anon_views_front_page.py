@@ -41,7 +41,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         # in the middle of the page they see a list of most viewed issues
         title = self.wait_for_element_tag('h2').text
         self.assertIn('Popular Issues', title)
-        self.wait_for_element_class('issue-list-item')
+        self.wait_for_element_class('list-group-item')
 
         # they click on the top issue and it takes them to issue detail page
         issue_link = self.wait_for_element_link('Test')
@@ -72,7 +72,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         project_btn = self.wait_for_element_link('Projects')
         project_btn.click()
         self.assertRegex(self.browser.current_url, '/project_list')
-        project_list = self.wait_for_element_class('project-list').text
+        project_list = self.wait_for_element_class('list-group').text
         self.assertIn('Test Project', project_list)
 
         # user clicks issues on navbar and is taken to list of all issues organized
@@ -80,7 +80,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         self.wait_for_element_class('navbar-toggler').click()
         issues_btn = self.wait_for_element_link('Issues')
         issues_btn.click()
-        issue_list = self.wait_for_element_class('issue-list').text
+        issue_list = self.wait_for_element_class('list-group').text
         self.assertIn('Test', issue_list)
 
         # user clicks home and is taken to issue list of most viewed
