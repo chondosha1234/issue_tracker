@@ -36,7 +36,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         self.assertRegex(self.browser.current_url, '/issue_list')
 
         # they see a navbar at the top with buttons 'home' 'issues' 'projects'
-        navbar = self.browser.find_element(By.CSS_SELECTOR, '.navbar')
+        navbar = self.wait_for_element_selector('.navbar')
 
         # in the middle of the page they see a list of most viewed issues
         title = self.wait_for_element_tag('h2').text

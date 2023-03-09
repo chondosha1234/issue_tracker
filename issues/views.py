@@ -120,6 +120,7 @@ class ProjectListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         context['search_form'] = SearchForm()
+        context['filter_term'] = self.kwargs.get('filter_term')
         return context
 
 
