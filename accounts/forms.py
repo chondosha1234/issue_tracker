@@ -6,12 +6,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(
+    name = forms.CharField(
         label="",
-        widget=forms.EmailInput(
+        widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Email Address"
+                "placeholder": "User Name"
             }))
 
     password = forms.CharField(
@@ -45,12 +45,23 @@ class CreateAccountForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["email"]
-        widgets = {"email": forms.EmailInput(attrs={
-            "class": "form-control",
-            "placeholder": "Email Address",
-            "name": "email"
-        })}
+        fields = ["name", "email"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "User Name",
+                    "name": "name"
+                },
+            ),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Email Address",
+                    "name": "email"
+                },
+            ),
+        }
         error_messages = {
             'email': {'required': "Must enter an email"}
         }
@@ -72,3 +83,4 @@ class CreateAccountForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CreateAccountForm, self).__init__(*args, **kwargs)
         self.fields["email"].label = ""
+        self.fields["name"].label = ""

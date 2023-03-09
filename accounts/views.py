@@ -30,9 +30,9 @@ class LoginView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
             password = form.cleaned_data['password']
-            user = authenticate(email=email, password=password)
+            user = authenticate(name=name, password=password)
             if user:
                 auth_login(request, user)
                 return redirect('issues:home')

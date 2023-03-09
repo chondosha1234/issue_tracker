@@ -13,7 +13,7 @@ class AnonVisitsHomeTest(FunctionalTest):
     def test_visit_home_page_and_look_at_issues_and_projects(self):
 
         # creating project and issues for testing purposes
-        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
         project = Project.objects.create(
             title="Test Project",
             summary="This is a test project",
@@ -52,7 +52,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         description = self.wait_for_element_class('issue-description').text
         self.assertIn('Test', description)
         self.assertIn('This is a test issue', description)
-        self.assertIn('user1234@example.org', description)
+        self.assertIn('chondosha', description)
 
         # they click on the project name and it takes them to a project detail page
         project_link = self.wait_for_element_link('Test Project')

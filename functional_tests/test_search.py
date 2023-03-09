@@ -15,7 +15,7 @@ class SearchBarTest(FunctionalTest):
     def test_search_projects_issues_and_users(self):
 
         # creating projects and issue for tests
-        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
         project = Project.objects.create(
             title="Test Project",
             summary="This is a test project",

@@ -11,7 +11,7 @@
     <form action="{% url 'login' %}" method="post">
       {% csrf_token %}
       <div class="form-outline mb-4">
-          {{ form.email }}
+          {{ form.name }}
       </div>
       <div class="form-outline mb-4">
           {{ form.password }}

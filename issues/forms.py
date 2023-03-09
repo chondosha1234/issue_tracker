@@ -13,9 +13,9 @@ class SearchForm(forms.Form):
         label="",
         max_length=64,
         widget=forms.TextInput(
-        attrs={
+            attrs={
                 'class': 'form-control',
-                'placeholder': 'Search...'
+                'placeholder': 'Search...',
             },
         ),
     )
@@ -70,6 +70,20 @@ class UpdateProjectForm(ProjectForm):
         return project
 
 
+class AddUserProjectForm(forms.Form):
+    username = forms.CharField(
+        label="",
+        max_length=64,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter Username',
+            },
+        ),
+    )
+
+
+
 class IssueForm(forms.ModelForm):
 
     class Meta:
@@ -105,7 +119,6 @@ class IssueForm(forms.ModelForm):
         self.fields['summary'].label = ''
 
 
-
 class CreateIssueForm(IssueForm):
 
     def save(self, commit=True):
@@ -128,3 +141,7 @@ class UpdateIssueForm(IssueForm):
         if commit:
             issue.save()
         return issue
+
+
+class AddUserIssueForm(forms.Form):
+    pass

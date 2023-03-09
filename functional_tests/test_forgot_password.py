@@ -20,7 +20,7 @@ class ForgotPasswordTest(FunctionalTest):
         else:
             test_email = 'test@example.org'
 
-        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
 
         # user goes to login page
         self.browser.get(self.live_server_url + reverse('login'))
@@ -73,7 +73,7 @@ class ForgotPasswordTest(FunctionalTest):
         self.assertRegex(self.browser.current_url, 'login')
 
         # they enter username and new password and log in
-        email = self.wait_for_element_name('email').send_keys('user1234@example.org')
+        username = self.wait_for_element_name('name').send_keys('chondosha')
         password = self.wait_for_element_name('password').send_keys('chondosha420')
         btn = self.wait_for_element_selector('.btn').click()
 

@@ -11,6 +11,9 @@
     <form action="{% url 'create_account' %}" method="post">
       {% csrf_token %}
       <div class="form-outline mb-4">
+          {{ form.name }}
+      </div>
+      <div class="form-outline mb-4">
           {{ form.email }}
       </div>
       <div class="form-outline mb-4">

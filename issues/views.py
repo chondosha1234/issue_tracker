@@ -9,6 +9,7 @@ from issues.models import Issue, Project
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
     UpdateProjectForm, UpdateIssueForm,
+    AddUserProjectForm, AddUserIssueForm,
     SearchForm
     )
 
@@ -199,6 +200,24 @@ def delete_project(request, project_id):
 
 
 @login_required(login_url='login')
+def add_user_to_project(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        form = AddUserProjectForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user = User.objects.get(name=username)
+            if user:
+                project.assigned_users.add(user)
+            else:
+                return
+                # error message
+        return redirect('issues:project_details', project_id=project.id)
+# fix this
+    return render(request, 'update_project.html')
+
+
+@login_required(login_url='login')
 def create_issue(request, project_id):
     user = request.user
     project = Project.objects.get(id=project_id)
@@ -244,3 +263,13 @@ def delete_issue(request, issue_id):
             return redirect('issues:project_details', project_id=project.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def open_issue(request, issue_id):
+    pass
+
+
+@login_required(login_url='login')
+def close_issue(request, issue_id):
+    pass

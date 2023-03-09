@@ -37,12 +37,16 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(
+        max_length=64,
+        unique=True,
+        primary_key=True,
+        )
     email = models.EmailField(
         _("Email Address"),
-        max_length=255,
+        max_length=128,
         unique=True,
         help_text="<br><p class='help-text'>Ex: example@example.com<p>",
-        primary_key=True
         )
     is_staff = models.BooleanField(_("Staff status"),default = False)
     is_superuser = models.BooleanField(_("Super User"), default = False)
@@ -52,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'name'
 
     def __str__(self):
-        return self.email
+        return self.name
