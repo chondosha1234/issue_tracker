@@ -2,9 +2,9 @@ from django import forms
 from issues.models import Issue, Project
 
 PRIORITY_CHOICES = [
-    ('HIGH', 'High'),
-    ('MED', 'Medium'),
-    ('LOW', 'Low'),
+    ('HIGH', {'label': 'High', 'class': 'form-check-input'}),
+    ('MED', {'label': 'High', 'class': 'form-check-input'}),
+    ('LOW', {'label': 'High', 'class': 'form-check-input'}),
 ]
 
 
@@ -56,6 +56,7 @@ class CreateProjectForm(ProjectForm):
         project.modified_by = self.user
         if commit:
             project.save()
+        project.assigned_users.add(self.user)
         return project
 
 
@@ -84,7 +85,7 @@ class IssueForm(forms.ModelForm):
             'priority': forms.RadioSelect(
                 choices=PRIORITY_CHOICES,
                 attrs={
-                    'class': 'form-control',
+                    'class': 'form-check',
                 },
             ),
             'summary': forms.Textarea(
@@ -104,6 +105,7 @@ class IssueForm(forms.ModelForm):
         self.fields['summary'].label = ''
 
 
+
 class CreateIssueForm(IssueForm):
 
     def save(self, commit=True):
@@ -113,6 +115,7 @@ class CreateIssueForm(IssueForm):
         issue.modified_by = self.user
         if commit:
             issue.save()
+        issue.assigned_users.add(self.user)
         return issue
 
 

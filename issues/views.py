@@ -35,7 +35,6 @@ def search(request):
         'search_form': form,
         'results': results,
     }
-    print(results)
     return render(request, 'search.html', context)
 
 
@@ -80,6 +79,7 @@ class IssueListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
         context['search_form'] = SearchForm()
+        context['filter_term'] = self.kwargs.get('filter_term')
         return context
 
 
@@ -88,7 +88,10 @@ class IssueDetailView(DetailView):
     template_name = 'issue_details.html'
 
     def get_object(self):
-        return Issue.objects.get(pk=self.kwargs.get('issue_id'))
+        issue = Issue.objects.get(pk=self.kwargs.get('issue_id'))
+        issue.visits += 1
+        issue.save()
+        return issue
 
     def get_context_data(self, **kwargs):
         context = super(IssueDetailView, self).get_context_data(**kwargs)
@@ -141,7 +144,10 @@ class ProjectDetailView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
-        context['project'] = Project.objects.get(pk=self.kwargs.get('project_id'))
+        project = Project.objects.get(pk=self.kwargs.get('project_id'))
+        project.visits += 1
+        project.save()
+        context['project'] = project
         context['search_form'] = SearchForm()
         return context
 

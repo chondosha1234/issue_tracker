@@ -7,8 +7,31 @@
   <div class="row">
     <div class="col-md-11 offset-md-1">
       <br>
-      <h2>Popular Issues</h2>
+      {% if filter_term %}
+        {% if filter_term == 'recent' %}
+          <h2>Recent Issues</h2>
+        {% elif filter_term == 'popular' %}
+          <h2>Popular Issues</h2>
+        {% elif filter_term == 'open' %}
+          <h2>Open Issues</h2>
+        {% elif filter_term == 'closed' %}
+          <h2>Closed Issues</h2>
+        {% else %}
+          <h2>Issues</h2>
+        {% endif %}
+      {% else %}
+        <h2>Popular Issues</h2>
+      {% endif %}
+
       <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="filter-buttons">
+            <a class="filter" href="{% url 'issues:issue_list' 'recent' %}">Latest</a>
+            <a class="filter" href="{% url 'issues:issue_list' 'popular' %}">Most Viewed</a>
+            <a class="filter" href="{% url 'issues:issue_list' 'open' %}">Open</a>
+            <a class="filter" href="{% url 'issues:issue_list' 'closed' %}">Closed</a>
+          </div>
+        </li>
       {% for issue in issue_list %}
         <li class="list-group-item">
           <h4><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>

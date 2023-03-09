@@ -11,9 +11,10 @@ class Project(models.Model):
     modified_on = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_modified_by')
     visits = models.IntegerField(default=0)
+    assigned_users = models.ManyToManyField(User, related_name="projects_assigned")
 
     class Meta:
-        ordering = ('-created_on', 'title')
+        ordering = ('-visits', '-created_on', 'title')
 
     def __str__(self):
         return self.title
@@ -40,10 +41,10 @@ class Issue(models.Model):
     modified_on = models.DateField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_modified_by')
     visits = models.IntegerField(default=0)
+    assigned_users = models.ManyToManyField(User, related_name="issues_assigned")
 
     class Meta:
-        ordering = ('issue_status', 'priority', '-created_on', '-visits')
-        #unique_together = ('project', 'title')
+        ordering = ('-visits', '-created_on', 'issue_status', 'priority')
 
     def __str__(self):
         return self.title

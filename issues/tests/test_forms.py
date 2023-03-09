@@ -53,6 +53,17 @@ class CreateProjectFormTest(TestCase):
         form.save()
         self.assertEquals(Project.objects.count(), 1)
 
+    def test_create_adds_user_to_list_of_assigned_users(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        form = CreateProjectForm(user=user, data={
+            'title': 'Test',
+            'summary': 'Test project'
+        })
+        form.save()
+        project = Project.objects.get(title='Test')
+        self.assertEqual(project.assigned_users.count(), 1)
+        self.assertEqual(project.assigned_users.first(), user)
+
 
 class UpdateProjectFormTest(TestCase):
 
@@ -131,6 +142,19 @@ class CreateIssueFormTest(TestCase):
         })
         form.save()
         self.assertEquals(Issue.objects.count(), 1)
+
+    def test_create_adds_user_to_list_of_assigned_users(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        form = CreateIssueForm(user=user, project=project, data={
+            'title': 'Test',
+            'priority': 'LOW',
+            'summary': 'Test project'
+        })
+        form.save()
+        issue = Issue.objects.get(title='Test')
+        self.assertEqual(issue.assigned_users.count(), 1)
+        self.assertEqual(issue.assigned_users.first(), user)
 
 
 class UpdateIssueFormTest(TestCase):

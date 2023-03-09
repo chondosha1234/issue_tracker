@@ -7,8 +7,25 @@
   <div class="row">
     <div class="col-md-11 offset-md-1">
       <br>
-      <h2>Recent Projects</h2>
+      {% if filter_term %}
+        {% if filter_term == 'recent' %}
+          <h2>Recent Projects</h2>
+        {% elif filter_term == 'popular' %}
+          <h2>Popular Projects</h2>
+        {% else %}
+          <h2>Projects</h2>
+        {% endif %}
+      {% else %}
+        <h2>Popular Projects</h2>
+      {% endif %}
+
       <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="filter-buttons">
+            <a class="filter" href="{% url 'issues:project_list' 'recent' %}">Latest</a>
+            <a class="filter" href="{% url 'issues:project_list' 'popular' %}">Most Viewed</a>
+          </div>
+        </li>
         {% for project in project_list %}
           <li class="list-group-item">
             <h4><a class="item-title" href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h4>

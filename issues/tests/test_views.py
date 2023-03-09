@@ -283,7 +283,38 @@ class IssueListTest(TestCase):
 
 
 class IssueDetailTest(TestCase):
-    pass
+
+    def test_view_renders_correct_template(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            issue_status='Open',
+            created_by=user,
+            modified_by=user,
+        )
+        response = self.client.get(f'/issue_details/{issue.id}')
+        self.assertEquals(response.templates[0].name, 'issue_details.html')
+        self.assertTemplateUsed(response, 'issue_details.html')
+
+
+    def test_view_adds_visit_to_issue(self):
+        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            issue_status='Open',
+            created_by=user,
+            modified_by=user,
+        )
+        self.assertEqual(issue.visits, 0)
+        response = self.client.get(f'/issue_details/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertEqual(changed_issue.visits, 1)
 
 
 class ProjectListViewTest(TestCase):
@@ -429,6 +460,13 @@ class ProjectDetailViewTest(TestCase):
         response = self.client.get(f'/project_details/{project.id}/closed')
         self.assertEquals(response.context['issue_list'].count(), 1)
         self.assertEquals(response.context['issue_list'][0], issue2)
+
+    def test_view_adds_visit_to_project(self):
+        project = self.create_test_project()
+        self.assertEqual(project.visits, 0)
+        response = self.client.get(f'/project_details/{project.id}')
+        changed_project = Project.objects.get(id=project.id)
+        self.assertEqual(changed_project.visits, 1)
 
 
 class CreateProjectTest(TestCase):
