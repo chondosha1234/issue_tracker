@@ -77,4 +77,4 @@ class ForgotPasswordTest(FunctionalTest):
         password = self.wait_for_element_name('password').send_keys('chondosha420')
         btn = self.wait_for_element_selector('.btn').click()
 
-        self.assertRegex(self.browser.current_url, 'issue_list')
+        self.assertRegex(self.browser.current_url, '/user_home')

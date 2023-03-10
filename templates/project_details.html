@@ -7,21 +7,32 @@
 <div class="row">
   <div class="col-md-8 offset-md-2">
     <div class="project-description">
-        <h3>{{ project.title }}</h3>
+        <h4>{{ project.title }}</h4>
         <h6>{{ project.summary }}</h6>
 
-        <ul class='issue-list'>
-          {% for issue in issue_list %}
-          <li class="issue-list-item">
-            <h4><a href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>
-            <p>{{ issue.issue_status }}</p>
-            <p>{{ issue.priority }}</p>
-            <p>Project: {{ issue.project }}</p>
-            <p>Created By: {{ issue.created_by }}</p>
-            <p>Created: {{ issue.created_on }}</p>
-            <p>Modified: {{ issue.modified_on }}</p>
+        <br>
+        <h5>Issues:</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="filter-buttons">
+              <a class="filter" href="{% url 'issues:project_details' project_id=project.id filter_term='open' %}">Open</a>
+              <a class="filter" href="{% url 'issues:project_details' project_id=project.id filter_term='closed' %}">Closed</a>
+            </div>
           </li>
-          {% endfor %}
+        {% for issue in issue_list %}
+          <li class="list-group-item">
+            <h4><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>
+            <div class="item-info">
+              <p> Project: {{ issue.project }}</p>
+              <p> {{ issue.issue_status }} &nbsp; &nbsp; &nbsp; {{ issue.priority }}</p>
+            </div>
+            <div class="item-dates">
+              <p> Created By: {{ issue.created_by }} -- {{ issue.created_on }}</p>
+              <p> Last Updated: {{ issue.modified_on }}</p>
+            </div>
+          </li>
+        {% endfor %}
+        </ul>
     </div>
   </div>
 </div>

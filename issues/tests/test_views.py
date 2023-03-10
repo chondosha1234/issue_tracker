@@ -28,9 +28,15 @@ class HomePageTest(TestCase):
         found = resolve('/')
         self.assertEquals(found.func, home_page)
 
-    def test_home_page_redirects(self):
+    def test_home_page_without_user_redirects_to_issue_list(self):
         response = self.client.get('/')
         self.assertRedirects(response, '/issue_list')
+
+    def test_home_redirects_to_user_home_if_logged_in(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        self.client.force_login(user)
+        response = self.client.get('/')
+        self.assertRedirects(response, f'/user_home/{user.pk}')
 
 
 class SearchTest(TestCase):

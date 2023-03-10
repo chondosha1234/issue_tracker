@@ -61,9 +61,9 @@ class AnonVisitsHomeTest(FunctionalTest):
 
         # project detail has some information at top and a list of issues related
         # to this project
-        title = self.wait_for_element_tag('h3').text
+        title = self.wait_for_element_tag('h4').text
         self.assertIn('Test Project', title)
-        issue_list = self.wait_for_element_class('issue-list').text
+        issue_list = self.wait_for_element_class('list-group').text
         self.assertIn('Test', issue_list)
 
         # user clicks projects button on navbar and is taken to list of proejcts

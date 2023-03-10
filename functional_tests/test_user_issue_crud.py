@@ -57,7 +57,7 @@ class TestUserCRUD(FunctionalTest):
         submit_btn.click()
 
         # project title is changed and the summary is the same
-        project_title = self.wait_for_element_tag('h3').text
+        project_title = self.wait_for_element_tag('h4').text
         self.assertIn('Test Project', project_title)
         project_summary = self.wait_for_element_tag('h6').text
         self.assertIn('This is a test project', project_summary)
@@ -87,7 +87,7 @@ class TestUserCRUD(FunctionalTest):
         # they click on the issue and are taken to issue detail page
         issue_link.click()
         self.assertRegex(self.browser.current_url, '/issue_details/1')
-        issue_title = self.wait_for_element_tag('h3').text
+        issue_title = self.wait_for_element_tag('h4').text
         self.assertIn('Test Issue', issue_title)
 
         # they see buttons for update and delete issue (because they created it)
@@ -114,7 +114,7 @@ class TestUserCRUD(FunctionalTest):
 
         # they are taken back to issue detail page and see the issue is altered
         self.assertRegex(self.browser.current_url, '/issue_details/1')
-        issue_title = self.wait_for_element_tag('h3').text
+        issue_title = self.wait_for_element_tag('h4').text
         self.assertIn('Changed Test Issue', issue_title)
 
         # they click on delete issue and get a warning prompt
@@ -126,7 +126,7 @@ class TestUserCRUD(FunctionalTest):
 
         # they click no and nothing happens
         alert.dismiss()
-        issue_title = self.wait_for_element_tag('h3').text
+        issue_title = self.wait_for_element_tag('h4').text
         self.assertIn('Changed Test Issue', issue_title)
 
         # they click delete again, and answer yes to prompt and they are redirected to

@@ -9,7 +9,7 @@
     <div class="col-md-11 offset-md-1">
       <div class="issue-description">
         <br>
-          <h3> {{ issue.title }} </h3>
+          <h4> {{ issue.title }} </h4>
           <p> Project : <a href="{% url 'issues:project_details' issue.project.id %}"> {{ issue.project }}</a></p>
           <p> Description: </p>
           <p>{{ issue.summary }}</p>

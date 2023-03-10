@@ -17,7 +17,10 @@ User = get_user_model()
 
 
 def home_page(request):
-    return redirect('issues:issue_list')
+    if request.user.is_authenticated:
+        return redirect('issues:user_home', user_id=request.user.pk)
+    else:
+        return redirect('issues:issue_list')
 
 
 def search(request):

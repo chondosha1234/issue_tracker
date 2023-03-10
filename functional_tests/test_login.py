@@ -81,7 +81,7 @@ class LoginTest(FunctionalTest):
         password.send_keys("chondosha5563")
         submit.click()
 
-        self.assertEqual(self.browser.current_url, self.live_server_url + reverse('issues:issue_list'))
+        self.assertRegex(self.browser.current_url, '/user_home/chondosha')
 
         # user can now see in the top right corner that they are logged in
         # there is now a 'log out' link / button instead of log in
