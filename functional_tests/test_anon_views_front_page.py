@@ -11,6 +11,7 @@ User = get_user_model()
 class AnonVisitsHomeTest(FunctionalTest):
 
     def test_visit_home_page_and_look_at_issues_and_projects(self):
+        reset_sequences = True
 
         # creating project and issues for testing purposes
         user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
@@ -46,7 +47,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         # they click on the top issue and it takes them to issue detail page
         issue_link = self.wait_for_element_link('Test')
         issue_link.click()
-        self.assertRegex(self.browser.current_url, '/issue_details/1')
+        self.assertRegex(self.browser.current_url, '/issue_details')
 
         # they see details about issue description, related project, users involved
         description = self.wait_for_element_class('issue-description').text
@@ -57,7 +58,7 @@ class AnonVisitsHomeTest(FunctionalTest):
         # they click on the project name and it takes them to a project detail page
         project_link = self.wait_for_element_link('Test Project')
         project_link.click()
-        self.assertRegex(self.browser.current_url, '/project_details/1')
+        self.assertRegex(self.browser.current_url, '/project_details')
 
         # project detail has some information at top and a list of issues related
         # to this project

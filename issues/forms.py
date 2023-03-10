@@ -1,5 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
+
 from issues.models import Issue, Project
+
+User = get_user_model()
 
 PRIORITY_CHOICES = [
     ('HIGH', {'label': 'High', 'class': 'form-check-input'}),
@@ -70,20 +74,6 @@ class UpdateProjectForm(ProjectForm):
         return project
 
 
-class AddUserProjectForm(forms.Form):
-    username = forms.CharField(
-        label="",
-        max_length=64,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter Username',
-            },
-        ),
-    )
-
-
-
 class IssueForm(forms.ModelForm):
 
     class Meta:
@@ -143,5 +133,20 @@ class UpdateIssueForm(IssueForm):
         return issue
 
 
-class AddUserIssueForm(forms.Form):
-    pass
+class AddUserForm(forms.Form):
+    username = forms.CharField(
+        label="",
+        max_length=64,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter Username',
+            },
+        ),
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if not User.objects.filter(name=username).exists():
+            raise forms.ValidationError("This username does not exist")
+        return username

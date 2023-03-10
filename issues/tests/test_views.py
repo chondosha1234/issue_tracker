@@ -581,6 +581,36 @@ class DeleteProjectTest(TestCase):
         self.assertRedirects(response, f'/project_details/{project.id}')
 
 
+class AddAndRemoveUserToProjectTest(TestCase):
+
+    def test_POST_redirects_to_project_details(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        response = self.client.post(f'/add_user_to_project/{project.id}', data={'username': 'chondosha'})
+        self.assertRedirects(response, f'/project_details/{project.id}')
+
+    def test_adds_user_to_list_of_assigned_users(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        self.assertEqual(project.assigned_users.count(), 0)
+
+        response = self.client.post(f'/add_user_to_project/{project.id}', data={'username': 'chondosha'})
+        self.assertEqual(project.assigned_users.count(), 1)
+
+    def test_removes_user_from_list_of_assigned_users(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        project.assigned_users.add(user)
+        project.save()
+        self.assertEqual(project.assigned_users.count(), 1)
+
+        response = self.client.post(f'/remove_user_from_project/{project.id}', data={'username': 'chondosha'})
+        self.assertEqual(project.assigned_users.count(), 0)
+
+
 class CreateIssueTest(TestCase):
 
     def test_GET_create_project_renders_correct_template(self):
@@ -741,3 +771,54 @@ class DeleteIssueTest(TestCase):
 
         response = self.client.post(f'/delete_issue/{issue.id}')
         self.assertRedirects(response, f'/issue_details/{issue.id}')
+
+
+class AddAndRemoveUserToIssueTest(TestCase):
+
+    def test_POST_redirects_to_project_details(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        response = self.client.post(f'/add_user_to_issue/{issue.id}', data={'username': 'chondosha'})
+        self.assertRedirects(response, f'/issue_details/{issue.id}')
+
+    def test_adds_user_to_list_of_assigned_users(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        self.assertEqual(issue.assigned_users.count(), 0)
+
+        response = self.client.post(f'/add_user_to_issue/{issue.id}', data={'username': 'chondosha'})
+        self.assertEqual(issue.assigned_users.count(), 1)
+
+    def test_removes_user_from_list_of_assigned_users(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        issue.assigned_users.add(user)
+        issue.save()
+        self.assertEqual(issue.assigned_users.count(), 1)
+
+        response = self.client.post(f'/remove_user_from_issue/{issue.id}', data={'username': 'chondosha'})
+        self.assertEqual(issue.assigned_users.count(), 0)

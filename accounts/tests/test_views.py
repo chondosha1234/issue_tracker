@@ -16,26 +16,40 @@ class LoginViewTest(TestCase):
         response = self.client.post(
             '/accounts/login',
             data={
-                'email': "user1234@example.org",
+                'email': "chondosha",
                 'password': "chondosha5563"
             }
         )
         self.assertTemplateUsed(response, 'login.html')
 
     def test_successful_login_authenticates_user(self):
-        user = User.objects.create(email="user1234@example.org", password="chondosha5563")
+        user = User.objects.create(name="chondosha", email="user1234@example.org", password="chondosha5563")
         user.set_password(user.password)
         user.save()
         response = self.client.post(
             '/accounts/login',
             data={
-                'email': "user1234@example.org",
+                'name': "chondosha",
                 'password': "chondosha5563"
             }
         )
-        self.assertRedirects(response, '/')
         user_id = response.wsgi_request.user
         self.assertEquals(user, user_id)
+
+    def test_successful_login_redirects_to_user_home(self):
+        user = User.objects.create(name="chondosha", email="user1234@example.org", password="chondosha5563")
+        user.set_password(user.password)
+        user.save()
+        response = self.client.post(
+            '/accounts/login',
+            data={
+                'name': "chondosha",
+                'password': "chondosha5563"
+            },
+            follow=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain[-1][0], '/user_home/chondosha')
 
 
 class CreateAccountviewTest(TestCase):
@@ -50,6 +64,7 @@ class CreateAccountviewTest(TestCase):
         response = self.client.post(
             '/accounts/create_account',
             data={
+                'name': 'chondosha',
                 'email': 'user1234@example.org',
                 'password': 'chondosha5563',
                 'confirm_password': 'chondosha5563'
@@ -61,6 +76,7 @@ class CreateAccountviewTest(TestCase):
         response = self.client.post(
             '/accounts/create_account',
             data={
+                'name': 'chondosha',
                 'email': 'user1234@example.org',
                 'password': '',
                 'confirm_password': ''
@@ -72,6 +88,7 @@ class CreateAccountviewTest(TestCase):
         self.client.post(
             '/accounts/create_account',
             data={
+                'name': 'chondosha',
                 'email': 'user1234@example.org',
                 'password': '',
                 'confirm_password': ''
@@ -83,6 +100,7 @@ class CreateAccountviewTest(TestCase):
         response = self.client.post(
             '/accounts/create_account',
             data={
+                'name': 'chondosha',
                 'email': 'user1234@example.org',
                 'password': 'chondosha5563',
                 'confirm_password': 'chondosha5563'

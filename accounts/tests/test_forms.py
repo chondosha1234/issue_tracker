@@ -9,11 +9,12 @@ class CreateAccountFormTest(TestCase):
 
     def test_form_input_has_placeholder_and_css_class(self):
         form = CreateAccountForm()
-        self.assertIn('placeholder="Email Address"', form.as_p())
+        self.assertIn('placeholder="User Name"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
 
     def test_form_validation_for_blank_username(self):
         form = CreateAccountForm(data={
+            "name": "chondosha",
             "email": "",
             "password": "chondosha5563",
             "confirm_password": "chondosha5563"})
@@ -22,6 +23,7 @@ class CreateAccountFormTest(TestCase):
 
     def test_form_validation_for_no_password(self):
         form = CreateAccountForm(data={
+            "name": "chondosha",
             "email": "user1234@example.org",
             "password": "",
             "confirm_password": ""})
@@ -29,6 +31,7 @@ class CreateAccountFormTest(TestCase):
 
     def test_form_validation_for_non_matching_passwords(self):
         form = CreateAccountForm(data={
+            "name": "chondosha",
             "email": "user1234@example.org",
             "password": "chondosha5563",
             "confirm_password": "wrongpassword"})
@@ -36,6 +39,7 @@ class CreateAccountFormTest(TestCase):
 
     def test_form_saves_user(self):
         form = CreateAccountForm(data={
+            "name": "chondosha",
             "email": "user1234@example.org",
             "password": "chondosha5563",
             "confirm_password": "chondosha5563"})
@@ -47,13 +51,13 @@ class LoginFormTest(TestCase):
 
     def test_form_input_has_placeholder_and_css_class(self):
         form = LoginForm()
-        self.assertIn('placeholder="Email Address"', form.as_p())
+        self.assertIn('placeholder="User Name"', form.as_p())
         self.assertIn('class="form-control"', form.as_p())
 
     def test_form_validation_for_blank_username(self):
-        form = LoginForm(data={'email': "", 'password': "chondosha5563"})
+        form = LoginForm(data={'name': "", 'password': "chondosha5563"})
         self.assertFalse(form.is_valid())
 
     def test_form_validation_for_no_password(self):
-        form = LoginForm(data={'email': "user1234@example.org", 'password': ""})
+        form = LoginForm(data={'name': "chondosha", 'password': ""})
         self.assertFalse(form.is_valid())

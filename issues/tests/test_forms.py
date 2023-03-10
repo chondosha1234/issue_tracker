@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from issues.models import Issue, Project
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
-    UpdateProjectForm, UpdateIssueForm
+    UpdateProjectForm, UpdateIssueForm,
+    AddUserForm
     )
 
 User = get_user_model()
@@ -101,6 +102,23 @@ class UpdateProjectFormTest(TestCase):
         updated_project = Project.objects.get(pk=project.id)
         self.assertEquals(project.created_by, user)
         self.assertEquals(project.modified_by, other_user)
+
+
+class AddUserFormTest(TestCase):
+
+    def test_form_input_has_placeholder_and_css_class(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        form = AddUserForm()
+        self.assertIn('placeholder="Enter Username"', form.as_p())
+        self.assertIn('class="form-control"', form.as_p())
+
+    def test_form_clean_checks_user_existence(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        form = AddUserForm(data={'username': 'chondosha'})
+        self.assertTrue(form.is_valid())
+
+        form = AddUserForm(data={'username': 'other_guy'})
+        self.assertFalse(form.is_valid())
 
 
 class CreateIssueFormTest(TestCase):

@@ -117,3 +117,11 @@ body {
   border: 1px solid #D73A49;
   box-shadow: 0 0 5px #D73A49;
 }
+
+.add-form {
+  display: none;
+}
+
+.remove-form {
+  display: none;
+}

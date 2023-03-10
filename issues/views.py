@@ -9,8 +9,7 @@ from issues.models import Issue, Project
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
     UpdateProjectForm, UpdateIssueForm,
-    AddUserProjectForm, AddUserIssueForm,
-    SearchForm
+    AddUserForm, SearchForm
     )
 
 User = get_user_model()
@@ -48,7 +47,7 @@ class UserHome(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserHome, self).get_context_data(**kwargs)
-        context['project_list'] = Project.objects.filter(created_by=self.request.user)
+        context['project_list'] = self.request.user.projects_assigned.all()
         return context
 
     def get_object(self):
@@ -100,6 +99,7 @@ class IssueDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(IssueDetailView, self).get_context_data(**kwargs)
         context['search_form'] = SearchForm()
+        context['user_form'] = AddUserForm()
         return context
 
 
@@ -154,6 +154,7 @@ class ProjectDetailView(ListView):
         project.save()
         context['project'] = project
         context['search_form'] = SearchForm()
+        context['user_form'] = AddUserForm()
         return context
 
 
@@ -207,18 +208,30 @@ def delete_project(request, project_id):
 def add_user_to_project(request, project_id):
     project = Project.objects.get(id=project_id)
     if request.method == 'POST':
-        form = AddUserProjectForm(request.POST)
+        form = AddUserForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             user = User.objects.get(name=username)
-            if user:
-                project.assigned_users.add(user)
-            else:
-                return
-                # error message
-        return redirect('issues:project_details', project_id=project.id)
-# fix this
-    return render(request, 'update_project.html')
+            project.assigned_users.add(user)
+            project.save()
+            return redirect('issues:project_details', project_id=project.id)
+
+    return redirect('issues:project_details', project_id=project.id)
+
+
+@login_required(login_url='login')
+def remove_user_from_project(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user = User.objects.get(name=username)
+            project.assigned_users.remove(user)
+            project.save()
+            return redirect('issues:project_details', project_id=project.id)
+
+    return redirect('issues:project_details', project_id=project.id)
 
 
 @login_required(login_url='login')
@@ -265,6 +278,36 @@ def delete_issue(request, issue_id):
         if issue.created_by == user:
             issue.delete()
             return redirect('issues:project_details', project_id=project.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def add_user_to_issue(request, issue_id):
+    issue = Issue.objects.get(id=issue_id)
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user = User.objects.get(name=username)
+            issue.assigned_users.add(user)
+            issue.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def remove_user_from_issue(request, issue_id):
+    issue = Issue.objects.get(id=issue_id)
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user = User.objects.get(name=username)
+            issue.assigned_users.remove(user)
+            issue.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)
 
