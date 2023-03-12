@@ -27,8 +27,8 @@ class Issue(models.Model):
         ('LOW', 'Low'),
     ]
     STATUS_CHOICES = [
-        ('OPEN', 'Open'),
-        ('CLOSED', 'Closed')
+        ('Open', 'Open'),
+        ('Closed', 'Closed')
     ]
 
     title = models.CharField(max_length=64)

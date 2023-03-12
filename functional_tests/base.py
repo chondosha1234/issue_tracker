@@ -33,6 +33,19 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.find_element(By.NAME, 'password').send_keys("chondosha5563")
         self.browser.find_element(By.CSS_SELECTOR, '.btn').click()
 
+    def create_project_and_issue_for_test(self):
+        self.wait_for_element_link('Create Project').click()
+        self.wait_for_element_name('title').send_keys('Test Project')
+        self.wait_for_element_name('summary').send_keys('This is a test project')
+        self.wait_for_element_selector('.btn').click()
+        self.wait_for_element_link('Test Project').click()
+
+        self.wait_for_element_link('Create Issue').click()
+        self.wait_for_element_name('title').send_keys('Test Issue')
+        self.wait_for_element_id('id_priority_2').click()
+        self.wait_for_element_name('summary').send_keys('This is a test issue')
+        self.wait_for_element_selector('.btn').click()
+
     def wait(fn):
         def modified_fn(*args, **kwargs):
             start_time = time.time()

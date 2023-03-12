@@ -314,9 +314,25 @@ def remove_user_from_issue(request, issue_id):
 
 @login_required(login_url='login')
 def open_issue(request, issue_id):
-    pass
+    user = request.user
+    issue = Issue.objects.get(id=issue_id)
+    if request.method == 'POST':
+        if issue.issue_status == 'Closed' and user in issue.assigned_users.all():
+            issue.issue_status = 'Open'
+            issue.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
 
 
 @login_required(login_url='login')
 def close_issue(request, issue_id):
-    pass
+    user = request.user
+    issue = Issue.objects.get(id=issue_id)
+    if request.method == 'POST':
+        if issue.issue_status == 'Open' and user in issue.assigned_users.all():
+            issue.issue_status = 'Closed'
+            issue.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)

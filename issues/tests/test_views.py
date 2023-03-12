@@ -822,3 +822,112 @@ class AddAndRemoveUserToIssueTest(TestCase):
 
         response = self.client.post(f'/remove_user_from_issue/{issue.id}', data={'username': 'chondosha'})
         self.assertEqual(issue.assigned_users.count(), 0)
+
+
+class OpenAndCloseIssueTest(TestCase):
+
+    def test_open_view_redirects_to_issue_details(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(f'/open_issue/{issue.id}')
+        self.assertRedirects(response, f'/issue_details/{issue.id}')
+
+    def test_POST_opens_a_closed_issue(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            issue_status='Closed',
+            created_by=user,
+            modified_by=user,
+        )
+        issue.assigned_users.add(user)
+        issue.save()
+        self.client.force_login(user)
+
+        response = self.client.post(f'/open_issue/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertEqual(changed_issue.issue_status, 'Open')
+
+    def test_POST_on_open_issue_does_nothing(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            issue_status='Open',
+            created_by=user,
+            modified_by=user,
+        )
+        issue.assigned_users.add(user)
+        issue.save()
+        self.client.force_login(user)
+
+        response = self.client.post(f'/open_issue/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertEqual(changed_issue.issue_status, 'Open')
+
+    def test_close_view_redirects_to_issue_details(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(f'/close_issue/{issue.id}')
+        self.assertRedirects(response, f'/issue_details/{issue.id}')
+
+    def test_POST_closes_an_open_issue(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            issue_status='Open',
+            created_by=user,
+            modified_by=user,
+        )
+        issue.assigned_users.add(user)
+        issue.save()
+        self.client.force_login(user)
+
+        response = self.client.post(f'/close_issue/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertEqual(changed_issue.issue_status, 'Closed')
+
+    def test_POST_on_closed_issue_does_nothing(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            issue_status='Closed',
+            created_by=user,
+            modified_by=user,
+        )
+        issue.assigned_users.add(user)
+        issue.save()
+        self.client.force_login(user)
+
+        response = self.client.post(f'/close_issue/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertEqual(changed_issue.issue_status, 'Closed')

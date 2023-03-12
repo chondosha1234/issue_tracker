@@ -30,27 +30,10 @@ class AddAndRemoveUsersTest(FunctionalTest):
         self.login_user_for_test()
 
         # creating project and issues for testing purposes
-        user = User.objects.get(name='chondosha')
+        self.create_project_and_issue_for_test()
         other_user = User.objects.create(name='other_guy', email="other_user@example.org", password="chondosha5563")
         other_user.set_password("chondosha5563")
         other_user.save()
-        project = Project.objects.create(
-            title="Test Project",
-            summary="This is a test project",
-            created_by=user,
-            modified_by=user
-        )
-        project.assigned_users.add(user)
-        project.save()
-        issue = Issue.objects.create(
-            title="Test Issue",
-            project=project,
-            summary="This is a test issue",
-            created_by=user,
-            modified_by=user,
-        )
-        issue.assigned_users.add(user)
-        issue.save()
 
         # user goes to home page and and sees their project
         self.browser.get(self.live_server_url + reverse('issues:home'))

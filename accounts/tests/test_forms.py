@@ -14,6 +14,15 @@ class CreateAccountFormTest(TestCase):
 
     def test_form_validation_for_blank_username(self):
         form = CreateAccountForm(data={
+            "name": "",
+            "email": "user1234@example.org",
+            "password": "chondosha5563",
+            "confirm_password": "chondosha5563"})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['name'], ["Must enter a username"])
+
+    def test_form_validation_for_blank_email(self):
+        form = CreateAccountForm(data={
             "name": "chondosha",
             "email": "",
             "password": "chondosha5563",

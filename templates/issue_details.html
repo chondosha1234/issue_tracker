@@ -38,6 +38,20 @@
     </div>
 
     <div class="col-md-3 offset-md-2">
+      <form action="{% url 'issues:open_issue' issue.id %}" method="post">
+         {% csrf_token %}
+         <input class="btn btn-info right mr-2" id='open-btn' type="submit" value="Open Issue">
+      </form>
+    </div>
+
+    <div class="col-md-3 offset-md-2">
+      <form action="{% url 'issues:close_issue' issue.id %}" method="post">
+         {% csrf_token %}
+         <input class="btn btn-info right mr-2" id='close-btn' type="submit" value="Close Issue" >
+      </form>
+    </div>
+
+    <div class="col-md-3 offset-md-2">
       <a class="btn btn-info right mr-2" id="add-user">Add User</a>
       <div class="add-form">
         <form action="{% url 'issues:add_user_to_issue' issue.id %}" method='post'>

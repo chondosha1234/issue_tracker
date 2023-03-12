@@ -63,7 +63,8 @@ class CreateAccountForm(forms.ModelForm):
             ),
         }
         error_messages = {
-            'email': {'required': "Must enter an email"}
+            'email': {'required': "Must enter an email"},
+            'name': {'required': "Must enter a username"}
         }
 
     def clean_confirm_password(self):
