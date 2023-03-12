@@ -5,11 +5,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
-from issues.models import Issue, Project
+from issues.models import Issue, Project, Comment
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
     UpdateProjectForm, UpdateIssueForm,
-    AddUserForm, SearchForm
+    AddUserForm, SearchForm,
+    CommentForm
     )
 
 User = get_user_model()
@@ -96,10 +97,27 @@ class IssueDetailView(DetailView):
         issue.save()
         return issue
 
+    def build_comment_tree(self, comment_list):
+        tree = []
+        for comment in comment_list:
+            node = {'comment': comment, 'replies': []}
+            if comment.replies.count():
+                node['replies'] = self.build_comment_tree(comment.replies.all())
+            tree.append(node)
+            print(node)
+        return tree
+
     def get_context_data(self, **kwargs):
         context = super(IssueDetailView, self).get_context_data(**kwargs)
+        issue = Issue.objects.get(pk=self.kwargs.get('issue_id'))
+        top_level_comments = Comment.objects.filter(issue=issue).filter(parent_comment=None)
+        comment_tree = self.build_comment_tree(top_level_comments)
+
+        context['comment_tree'] = comment_tree
+        context['comment_list'] = top_level_comments
         context['search_form'] = SearchForm()
         context['user_form'] = AddUserForm()
+        context['comment_form'] = CommentForm(self.request.user, issue)
         return context
 
 
@@ -333,6 +351,24 @@ def close_issue(request, issue_id):
         if issue.issue_status == 'Open' and user in issue.assigned_users.all():
             issue.issue_status = 'Closed'
             issue.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def add_comment(request, issue_id, parent_id=None):
+    issue = Issue.objects.get(id=issue_id)
+    user= request.user
+    if parent_id:
+        parent_comment = Comment.objects.get(id=parent_id)
+    else:
+        parent_comment = None
+
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST, user=user, issue=issue, parent=parent_comment)
+        if form.is_valid():
+            form.save()
             return redirect('issues:issue_details', issue_id=issue.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)

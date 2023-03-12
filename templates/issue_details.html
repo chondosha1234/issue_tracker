@@ -11,7 +11,7 @@
       <div class="issue-description">
         <br>
           <h4> {{ issue.title }} </h4>
-          <p> Project : <a href="{% url 'issues:project_details' issue.project.id %}"> {{ issue.project }}</a></p>
+          <p> Project : <a class="item-title" href="{% url 'issues:project_details' issue.project.id %}"> {{ issue.project }}</a></p>
           <p> Description: </p>
           <p>{{ issue.summary }}</p>
           <div class="item-info">
@@ -78,8 +78,30 @@
       </div>
     </div>
   </div>
-
-  <script src="{% static 'collapse.js' %}"></script>
   {% endif %}
 
+  <div class="row">
+    <div class="col-md-11 offset-md-1">
+      <h6>Comments:</h6>
+      <div class="comment-form">
+        <form action="{% url 'issues:add_comment' issue.id %}" method='post'>
+          {% csrf_token %}
+          {{ comment_form }}
+          {% if comment_form.errors %}
+          {{ comment_form.errors }}
+          {% endif %}
+          <button type="submit" class="btn btn-block mb-4" id="comment-btn">Submit</button>
+        </form>
+      </div>
+
+      <div class="comment-list">
+        <ul class="list-group">
+          {% include "tree_view.html" %}
+        </ul>
+        <br>
+      </div>
+    </div>
+  </div>
+
+<script src="{% static 'collapse.js' %}"></script>
 {% endblock %}

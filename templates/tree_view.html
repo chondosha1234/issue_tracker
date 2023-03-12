@@ -1,0 +1,31 @@
+{% load static %}
+
+{% for comment in comment_list %}
+  <li class="list-group-item comment" data-depth="{{ comment.depth }}">
+    <p>{{ comment.text }}</p>
+    <div class="comment-actions">
+      <a class="comment-link" id="reply-link-{{ comment.id }}">Reply</a>
+      {% if comment.user == user %}
+      <a class="comment-link" href="#">Edit</a>
+      <a class="comment-link" href="#">Delete</a>
+      {% endif %}
+      <div class="reply-form-{{ comment.id }}">
+        <form action="{% url 'issues:reply_comment' issue_id=issue.id parent_id=comment.id %}" method='post'>
+          {% csrf_token %}
+          {{ comment_form }}
+          {% if comment_form.errors %}
+          {{ comment_form.errors }}
+          {% endif %}
+          <button type="submit" class="btn btn-block mb-4" id="comment-btn">Submit</button>
+        </form>
+     </div>
+    </div>
+    {% if comment.replies.all|length %}
+      <ul class="list-group">
+        {% include "tree_view.html" with comment_list=comment.replies.all %}
+      </ul>
+    {% endif %}
+  </li>
+{% endfor %}
+
+<script src="{% static 'indent.js' %}"></script>

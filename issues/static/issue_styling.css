@@ -32,6 +32,18 @@ body {
 
 }
 
+.comment {
+  margin-left: calc(var(--indent-level) * 15px)
+}
+
+.comment-link {
+  color:#666666;
+}
+
+.comment-link:hover {
+  color: #999999;
+}
+
 .list-group {
   list-style-type: none;
   margin: 0;
@@ -123,5 +135,9 @@ body {
 }
 
 .remove-form {
+  display: none;
+}
+
+div[class^="reply-form-"] {
   display: none;
 }

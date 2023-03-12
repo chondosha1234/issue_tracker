@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from issues.models import Issue, Project
+from issues.models import Issue, Project, Comment
 
 User = get_user_model()
 
@@ -150,3 +150,38 @@ class AddUserForm(forms.Form):
         if not User.objects.filter(name=username).exists():
             raise forms.ValidationError("This username does not exist")
         return username
+
+
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ('text',)
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Enter a comment...',
+                    'rows': 3,
+                    'cols': 20,
+                },
+            ),
+        }
+
+    def __init__(self, user, issue, parent=None, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.issue = issue
+        self.parent = parent
+        self.fields['text'].label = ''
+
+    def save(self, commit=True):
+        comment = super().save(commit=False)
+        comment.user = self.user
+        comment.issue = self.issue
+        comment.parent_comment = self.parent
+        if self.parent:
+            comment.depth = self.parent.depth + 1
+        if commit:
+            comment.save()
+        return comment

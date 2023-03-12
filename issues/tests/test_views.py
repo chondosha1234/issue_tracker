@@ -3,7 +3,7 @@ from django.urls import resolve
 from django.contrib.auth import get_user_model
 
 from issues.views import home_page, IssueListView
-from issues.models import Issue, Project
+from issues.models import Issue, Project, Comment
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
     UpdateProjectForm, UpdateIssueForm
@@ -931,3 +931,66 @@ class OpenAndCloseIssueTest(TestCase):
         response = self.client.post(f'/close_issue/{issue.id}')
         changed_issue = Issue.objects.get(id=issue.id)
         self.assertEqual(changed_issue.issue_status, 'Closed')
+
+
+class AddCommentTest(TestCase):
+
+    def test_add_comment_redirects_to_issue_details(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(f'/add_comment/{issue.id}')
+        self.assertRedirects(response, f'/issue_details/{issue.id}')
+
+    def test_add_comment_creates_new_comment(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+
+        self.assertEqual(Comment.objects.count(), 0)
+        response = self.client.post(f'/add_comment/{issue.id}', data={
+            'text': 'This is a comment',
+        })
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(Comment.objects.first().text, 'This is a comment')
+
+    def test_add_comment_with_parent_id_creates_reply(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        response = self.client.post(f'/add_comment/{issue.id}', data={
+            'text': 'This is a comment',
+        })
+
+        parent = Comment.objects.first()
+        self.assertEqual(parent.replies.count(), 0)
+
+        response = self.client.post(f'/add_comment/{issue.id}/{parent.id}', data={
+            'text': 'This is a reply',
+        })
+
+        parent = Comment.objects.first()
+        self.assertEqual(parent.replies.count(), 1)
+        self.assertEqual(parent.replies.first().text, 'This is a reply')

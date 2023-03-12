@@ -1,11 +1,11 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from issues.models import Issue, Project
+from issues.models import Issue, Project, Comment
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
     UpdateProjectForm, UpdateIssueForm,
-    AddUserForm
+    AddUserForm, CommentForm
     )
 
 User = get_user_model()
@@ -248,3 +248,129 @@ class UpdateIssueFormTest(TestCase):
         updated_issue = Issue.objects.get(pk=issue.id)
         self.assertEquals(issue.created_by, user)
         self.assertEquals(issue.modified_by, other_user)
+
+
+class AddCommentFormTest(TestCase):
+
+    def test_form_text_validation(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+
+        form = CommentForm(user=user, issue=issue, data={
+            'text': ''
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_form_saves_new_comment(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+
+        self.assertEqual(Comment.objects.count(), 0)
+        form = CommentForm(user=user, issue=issue, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+        self.assertEqual(Comment.objects.count(), 1)
+
+    def test_form_saves_new_comment_with_correct_info(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        form = CommentForm(user=user, issue=issue, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+
+        comment = Comment.objects.first()
+        self.assertEqual(comment.text, 'This is a comment')
+        self.assertEqual(comment.user, user)
+        self.assertEqual(comment.issue, issue)
+
+    def test_form_with_parent_saves_reply_under_other_comment(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        form = CommentForm(user=user, issue=issue, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+        parent = Comment.objects.first()
+
+        form = CommentForm(user=user, issue=issue, parent=parent, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+
+        parent = Comment.objects.get(id=1)
+        reply = Comment.objects.get(id=2)
+        self.assertEqual(Comment.objects.count(), 2)
+        self.assertEqual(parent.replies.first(), reply)
+        self.assertEqual(reply.parent_comment, parent)
+
+    def test_base_comment_has_no_depth(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        form = CommentForm(user=user, issue=issue, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+
+        self.assertEqual(Comment.objects.first().depth, 0)
+
+    def test_replies_have_more_depth_than_parent(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test Issue",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        form = CommentForm(user=user, issue=issue, data={
+            'text': 'This is a comment'
+        })
+        form.save()
+
+        parent = Comment.objects.first()
+
+        form = CommentForm(user=user, issue=issue, parent=parent, data={
+            'text': 'This is a reply'
+        })
+        form.save()
+
+        self.assertEqual(Comment.objects.first().depth, 0)
+        self.assertEqual(Comment.objects.get(id=2).depth, 1)
