@@ -33,7 +33,7 @@ class Issue(models.Model):
 
     title = models.CharField(max_length=64)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    summary = models.TextField()  # maybe different text field
+    summary = models.TextField() 
     issue_status = models.CharField(max_length=6, choices=STATUS_CHOICES, default='Open')
     priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='Low')
     created_on = models.DateTimeField(auto_now_add=True)

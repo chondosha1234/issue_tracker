@@ -987,10 +987,60 @@ class AddCommentTest(TestCase):
         parent = Comment.objects.first()
         self.assertEqual(parent.replies.count(), 0)
 
-        response = self.client.post(f'/add_comment/{issue.id}/{parent.id}', data={
+        response = self.client.post(f'/reply_comment/{issue.id}/{parent.id}', data={
             'text': 'This is a reply',
         })
 
         parent = Comment.objects.first()
         self.assertEqual(parent.replies.count(), 1)
         self.assertEqual(parent.replies.first().text, 'This is a reply')
+
+
+class EditCommentTest(TestCase):
+
+    def test_edit_changes_exisitng_comment(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        comment = Comment.objects.create(
+            user=user,
+            text='This is a comment',
+            issue=issue,
+        )
+        self.client.force_login(user)
+
+        self.client.post(f'/edit_comment/{comment.id}', data={
+            'text': 'Changed comment'
+        })
+        changed_comment = Comment.objects.first()
+        self.assertEqual(changed_comment.text, 'Changed comment')
+
+
+class DeleteCommentTest(TestCase):
+
+    def test_delete_removes_existing_comment(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title='Test',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        comment = Comment.objects.create(
+            user=user,
+            text='This is a comment',
+            issue=issue,
+        )
+        self.client.force_login(user)
+
+        self.assertEqual(Comment.objects.count(), 1)
+        self.client.post(f'/delete_comment/{comment.id}')
+        self.assertEqual(Comment.objects.count(), 0)

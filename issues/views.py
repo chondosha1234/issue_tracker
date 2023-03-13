@@ -96,7 +96,7 @@ class IssueDetailView(DetailView):
         issue.visits += 1
         issue.save()
         return issue
-
+    """
     def build_comment_tree(self, comment_list):
         tree = []
         for comment in comment_list:
@@ -104,20 +104,26 @@ class IssueDetailView(DetailView):
             if comment.replies.count():
                 node['replies'] = self.build_comment_tree(comment.replies.all())
             tree.append(node)
-            print(node)
         return tree
+    """
+
+    def get_all_comment_forms(self, issue):
+        comments = Comment.objects.filter(issue=issue)
+        forms = {}
+        for comment in comments:
+            forms[comment.id] = CommentForm(user=self.request.user, issue=issue, instance=comment)
+        return forms
 
     def get_context_data(self, **kwargs):
         context = super(IssueDetailView, self).get_context_data(**kwargs)
         issue = Issue.objects.get(pk=self.kwargs.get('issue_id'))
         top_level_comments = Comment.objects.filter(issue=issue).filter(parent_comment=None)
-        comment_tree = self.build_comment_tree(top_level_comments)
 
-        context['comment_tree'] = comment_tree
         context['comment_list'] = top_level_comments
+        context['edit_forms'] = self.get_all_comment_forms(issue)
         context['search_form'] = SearchForm()
         context['user_form'] = AddUserForm()
-        context['comment_form'] = CommentForm(self.request.user, issue)
+        context['comment_form'] = CommentForm(user=self.request.user, issue=issue)
         return context
 
 
@@ -358,8 +364,8 @@ def close_issue(request, issue_id):
 
 @login_required(login_url='login')
 def add_comment(request, issue_id, parent_id=None):
+    user = request.user
     issue = Issue.objects.get(id=issue_id)
-    user= request.user
     if parent_id:
         parent_comment = Comment.objects.get(id=parent_id)
     else:
@@ -369,6 +375,33 @@ def add_comment(request, issue_id, parent_id=None):
         form = CommentForm(data=request.POST, user=user, issue=issue, parent=parent_comment)
         if form.is_valid():
             form.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def edit_comment(request, comment_id):
+    user = request.user
+    comment = Comment.objects.get(id=comment_id)
+    issue = comment.issue
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST, user=user, issue=issue, parent=comment.parent_comment, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('issues:issue_details', issue_id=issue.id)
+
+    return redirect('issues:issue_details', issue_id=issue.id)
+
+
+@login_required(login_url='login')
+def delete_comment(request, comment_id):
+    user = request.user
+    comment = Comment.objects.get(id=comment_id)
+    issue = comment.issue
+    if request.method == 'POST':
+        if user == comment.user:
+            comment.delete()
             return redirect('issues:issue_details', issue_id=issue.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)

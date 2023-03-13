@@ -1,14 +1,39 @@
 {% load static %}
+{% load filters %}
 
 {% for comment in comment_list %}
   <li class="list-group-item comment" data-depth="{{ comment.depth }}">
-    <p>{{ comment.text }}</p>
+
+    <div class="comment-text" id="comment-box-{{ comment.id }}">
+      <p class="comment-text-{{ comment.id }}">{{ comment.text }}</p>
+      <div class="comment-form-{{ comment.id }}">
+       <form action="{% url 'issues:edit_comment' comment.id %}" method="post">
+        {% csrf_token %}
+        {% with form=edit_forms|get:comment.id %}
+          {{ form }}
+          {% if form.errors %}
+          {{ form.errors }}
+          {% endif %}
+        {% endwith %}
+        <div class="text-center">
+          <button type="submit" class="btn btn-block mb-4" id='edit-btn'>Submit</button>
+        </div>
+       </form>
+      </div>
+    </div>
+
     <div class="comment-actions">
       <a class="comment-link" id="reply-link-{{ comment.id }}">Reply</a>
+
       {% if comment.user == user %}
-      <a class="comment-link" href="#">Edit</a>
-      <a class="comment-link" href="#">Delete</a>
+      <a class="comment-link" id="edit-link-{{ comment.id}}">Edit</a>
+
+      <form action="{% url 'issues:delete_comment' comment.id %}" method="post">
+        {% csrf_token %}
+        <input class="comment-link" id="delete-link-{{ comment.id }}" type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this comment?')">
+      </form>
       {% endif %}
+
       <div class="reply-form-{{ comment.id }}">
         <form action="{% url 'issues:reply_comment' issue_id=issue.id parent_id=comment.id %}" method='post'>
           {% csrf_token %}
@@ -20,12 +45,15 @@
         </form>
      </div>
     </div>
+
     {% if comment.replies.all|length %}
       <ul class="list-group">
         {% include "tree_view.html" with comment_list=comment.replies.all %}
       </ul>
     {% endif %}
+
   </li>
 {% endfor %}
 
 <script src="{% static 'indent.js' %}"></script>
+<script src="{% static 'edit_comment.js' %}"></script>

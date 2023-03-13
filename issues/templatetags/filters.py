@@ -12,3 +12,7 @@ register = template.Library()
 def is_instance(value, class_str):
     model_class = getattr(sys.modules[__name__], class_str)
     return isinstance(value, model_class)
+
+@register.filter(name='get')
+def get(value, arg):
+    return value[arg]

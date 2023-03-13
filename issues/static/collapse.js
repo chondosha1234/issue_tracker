@@ -28,7 +28,6 @@ reply_links.forEach(link => {
     //get the id of parent from class name
     let class_name = 'reply-form-' + link.id.substring(11);
     let content = document.getElementsByClassName(class_name)[0];
-    console.log(content)
     if (content.style.display === "block"){
       content.style.display = "none";
     } else {
