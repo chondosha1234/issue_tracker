@@ -19,6 +19,10 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def number_of_issues(self):
+        return self.issue_list.count()
+
 
 class Issue(models.Model):
     PRIORITY_CHOICES = [
@@ -32,7 +36,7 @@ class Issue(models.Model):
     ]
 
     title = models.CharField(max_length=64)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='issue_list')
     summary = models.TextField()
     issue_status = models.CharField(max_length=6, choices=STATUS_CHOICES, default='Open')
     priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='Low')
@@ -61,3 +65,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+    @property
+    def reply_count(self):
+        total = self.replies.count()
+        for reply in self.replies.all():
+            if reply:
+                total += reply.reply_count
+        return total

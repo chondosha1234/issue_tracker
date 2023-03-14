@@ -32,7 +32,7 @@
     {% for project in project_sidebar_list %}
     <li class="list-group-item sidebar">
       <h6><a class="item-title" href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h6>
-      <p class="sidebar-text">Number of issues: </p>
+      <p class="sidebar-text">Number of issues: {{ project.number_of_issues }}</p>
       <p class="sidebar-text">Last Updated: {{ project.modified_on }}<p>
     </li>
     {% endfor %}
