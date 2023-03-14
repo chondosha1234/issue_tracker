@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth import get_user_model
 
 from issues.models import Issue, Project, Comment
@@ -69,6 +70,7 @@ class IssueListView(ListView):
     model = Issue
     template_name = 'issue_list.html'
     paginate_by = 10
+    page_range_displayed = 8
 
     def get_queryset(self):
         if self.kwargs.get('filter_term'):
@@ -89,6 +91,16 @@ class IssueListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
         get_sidebar_context(self.request.user, context)
+
+        paginator = context['paginator']
+        page = context['page_obj']
+        context['current_page'] = page.number
+        context['total_pages'] = paginator.num_pages
+
+        start_page = max(page.number - self.page_range_displayed//2, 1)
+        end_page = min(page.number + self.page_range_displayed//2, paginator.num_pages)
+        context['page_range'] = range(start_page, end_page+1)
+        
         context['search_form'] = SearchForm()
         context['filter_term'] = self.kwargs.get('filter_term')
         return context
@@ -130,6 +142,7 @@ class ProjectListView(ListView):
     model = Project
     template_name = 'project_list.html'
     paginate_by = 10
+    page_range_displayed = 8
 
     def get_queryset(self):
         if self.kwargs.get('filter_term'):
@@ -147,6 +160,15 @@ class ProjectListView(ListView):
         context = super(ProjectListView, self).get_context_data(**kwargs)
         get_sidebar_context(self.request.user, context)
 
+        paginator = context['paginator']
+        page = context['page_obj']
+        context['current_page'] = page.number
+        context['total_pages'] = paginator.num_pages
+
+        start_page = max(page.number - self.page_range_displayed//2, 1)
+        end_page = min(page.number + self.page_range_displayed//2, paginator.num_pages)
+        context['page_range'] = range(start_page, end_page+1)
+
         context['search_form'] = SearchForm()
         context['filter_term'] = self.kwargs.get('filter_term')
         return context
@@ -155,7 +177,8 @@ class ProjectListView(ListView):
 class ProjectDetailView(ListView):
     model = Issue
     template_name = 'project_details.html'
-    paginate_by = 49
+    paginate_by = 10
+    page_range_displayed = 8
 
     def get_queryset(self):
         project = Project.objects.get(pk=self.kwargs.get('project_id'))
@@ -179,6 +202,16 @@ class ProjectDetailView(ListView):
         project = Project.objects.get(pk=self.kwargs.get('project_id'))
         project.visits += 1
         project.save()
+
+        paginator = context['paginator']
+        page = context['page_obj']
+        context['current_page'] = page.number
+        context['total_pages'] = paginator.num_pages
+
+        start_page = max(page.number - self.page_range_displayed//2, 1)
+        end_page = min(page.number + self.page_range_displayed//2, paginator.num_pages)
+        context['page_range'] = range(start_page, end_page+1)
+
         context['project'] = project
         context['search_form'] = SearchForm()
         context['user_form'] = AddUserForm()

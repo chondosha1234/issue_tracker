@@ -28,10 +28,6 @@ body {
   color: #999999;
 }
 
-.filter:visited {
-
-}
-
 .comment {
   margin-left: calc(var(--indent-level) * 15px)
 }
@@ -176,4 +172,20 @@ div[class^="comment-form-"]{
   color: #999999;
   font-size:13px;
   margin: 0;
+}
+
+.page-select {
+  color: #666666;
+}
+
+.page-select:hover {
+  color: #999999;
+}
+
+.page-select-num {
+  color: #ffffff;
+}
+
+.page-select-num:hover {
+  color: #D73A49;
 }
