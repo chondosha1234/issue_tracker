@@ -1,0 +1,42 @@
+
+<div class="row">
+
+  <div class="issue-items">
+
+    {% if user.is_authenticated %}
+    <h5>Your recent issues:</h5>
+    {% else %}
+    <h5>Top Issues:</h5>
+    {% endif %}
+
+    {% for issue in issue_sidebar_list %}
+    <li class="list-group-item sidebar">
+      <h6><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h6>
+      <p class="sidebar-text">Project: {{ issue.project }}</p>
+      <p class="sidebar-text">Last Updated: {{ issue.modified_on }}<p>
+    </li>
+    {% endfor %}
+
+  </div>
+
+  <br>
+
+  <div class="project-items">
+
+    {% if user.is_authenticated %}
+    <h5>Your recent projects:</h5>
+    {% else %}
+    <h5>Top Projects:</h5>
+    {% endif %}
+
+    {% for project in project_sidebar_list %}
+    <li class="list-group-item sidebar">
+      <h6><a class="item-title" href="{% url 'issues:project_details' project.id %}">{{ project.title }}</a></h6>
+      <p class="sidebar-text">Number of issues: </p>
+      <p class="sidebar-text">Last Updated: {{ project.modified_on }}<p>
+    </li>
+    {% endfor %}
+
+  </div>
+
+</div>

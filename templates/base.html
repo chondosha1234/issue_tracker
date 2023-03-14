@@ -27,10 +27,10 @@
               <a class="nav-link-active" aria-current="page" href="{% url 'issues:home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link-active" aria-current="page" href="{% url 'issues:project_list' %}">Projects</a>
+              <a class="nav-link-active" href="{% url 'issues:project_list' %}">Projects</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link-active" aria-current="page" href="{% url 'issues:issue_list' %}">Issues</a>
+              <a class="nav-link-active" href="{% url 'issues:issue_list' %}">Issues</a>
             </li>
             <li>
               {% if user.email %}
@@ -61,8 +61,9 @@
         {% endblock %}
       </div>
       <div class="col-4">
-        {% block sidebar_content %}
-        {% endblock %}
+        <div class="sidebar-container">
+        {% include 'sidebar.html' %}
+        </div>
       </div>
     </div>
 

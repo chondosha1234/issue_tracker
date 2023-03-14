@@ -11,7 +11,7 @@ class Project(models.Model):
     modified_on = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_modified_by')
     visits = models.IntegerField(default=0)
-    assigned_users = models.ManyToManyField(User, related_name="projects_assigned")
+    assigned_users = models.ManyToManyField(User, related_name='projects_assigned')
 
     class Meta:
         ordering = ('-visits', '-created_on', 'title')
@@ -33,7 +33,7 @@ class Issue(models.Model):
 
     title = models.CharField(max_length=64)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    summary = models.TextField() 
+    summary = models.TextField()
     issue_status = models.CharField(max_length=6, choices=STATUS_CHOICES, default='Open')
     priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='Low')
     created_on = models.DateTimeField(auto_now_add=True)
@@ -41,7 +41,7 @@ class Issue(models.Model):
     modified_on = models.DateField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_modified_by')
     visits = models.IntegerField(default=0)
-    assigned_users = models.ManyToManyField(User, related_name="issues_assigned")
+    assigned_users = models.ManyToManyField(User, related_name='issues_assigned')
 
     class Meta:
         ordering = ('-visits', '-created_on', 'issue_status', 'priority')

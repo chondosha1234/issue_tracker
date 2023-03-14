@@ -38,7 +38,10 @@ def search(request):
     context = {
         'search_form': form,
         'results': results,
+        'project_sidebar_list': project_sidebar_list,
+        'issue_sidebar_list': issue_sidebar_list
     }
+    get_sidebar_context(request.user, context)
     return render(request, 'search.html', context)
 
 
@@ -48,7 +51,10 @@ class UserHome(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserHome, self).get_context_data(**kwargs)
-        context['project_list'] = self.request.user.projects_assigned.all()
+        projects = self.request.user.projects_assigned.all()
+        context['project_list'] = projects
+        context['project_sidebar_list'] = projects.order_by('-modified_on')[:5]
+        context['issue_sidebar_list'] = self.request.user.issues_assigned.all().order_by('-modified_on')[:5]
         return context
 
     def get_object(self):
@@ -62,7 +68,7 @@ class UserProfile(DetailView):
 class IssueListView(ListView):
     model = Issue
     template_name = 'issue_list.html'
-    paginate_by = 49
+    paginate_by = 10
 
     def get_queryset(self):
         if self.kwargs.get('filter_term'):
@@ -82,6 +88,7 @@ class IssueListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(IssueListView, self).get_context_data(**kwargs)
+        get_sidebar_context(self.request.user, context)
         context['search_form'] = SearchForm()
         context['filter_term'] = self.kwargs.get('filter_term')
         return context
@@ -96,16 +103,6 @@ class IssueDetailView(DetailView):
         issue.visits += 1
         issue.save()
         return issue
-    """
-    def build_comment_tree(self, comment_list):
-        tree = []
-        for comment in comment_list:
-            node = {'comment': comment, 'replies': []}
-            if comment.replies.count():
-                node['replies'] = self.build_comment_tree(comment.replies.all())
-            tree.append(node)
-        return tree
-    """
 
     def get_all_comment_forms(self, issue):
         comments = Comment.objects.filter(issue=issue)
@@ -116,6 +113,8 @@ class IssueDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(IssueDetailView, self).get_context_data(**kwargs)
+        get_sidebar_context(self.request.user, context)
+
         issue = Issue.objects.get(pk=self.kwargs.get('issue_id'))
         top_level_comments = Comment.objects.filter(issue=issue).filter(parent_comment=None)
 
@@ -130,7 +129,7 @@ class IssueDetailView(DetailView):
 class ProjectListView(ListView):
     model = Project
     template_name = 'project_list.html'
-    paginate_by = 49
+    paginate_by = 10
 
     def get_queryset(self):
         if self.kwargs.get('filter_term'):
@@ -146,6 +145,8 @@ class ProjectListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectListView, self).get_context_data(**kwargs)
+        get_sidebar_context(self.request.user, context)
+
         context['search_form'] = SearchForm()
         context['filter_term'] = self.kwargs.get('filter_term')
         return context
@@ -173,6 +174,8 @@ class ProjectDetailView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectDetailView, self).get_context_data(**kwargs)
+        get_sidebar_context(self.request.user, context)
+
         project = Project.objects.get(pk=self.kwargs.get('project_id'))
         project.visits += 1
         project.save()
@@ -195,6 +198,7 @@ def create_project(request):
     context = {
         'form': form,
     }
+    get_sidebar_context(request.user, context)
     return render(request, 'create_project.html', context)
 
 
@@ -213,6 +217,7 @@ def update_project(request, project_id):
         'form': form,
         'project': project
     }
+    get_sidebar_context(request.user, context)
     return render(request, 'update_project.html', context)
 
 
@@ -272,6 +277,7 @@ def create_issue(request, project_id):
         'form': form,
         'project': project
     }
+    get_sidebar_context(request.user, context)
     return render(request, 'create_issue.html', context)
 
 
@@ -290,6 +296,7 @@ def update_issue(request, issue_id):
         'form': form,
         'issue': issue
     }
+    get_sidebar_context(request.user, context)
     return render(request, 'update_issue.html', context)
 
 
@@ -405,3 +412,12 @@ def delete_comment(request, comment_id):
             return redirect('issues:issue_details', issue_id=issue.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)
+
+
+def get_sidebar_context(user, context):
+    if user.is_authenticated:
+        context['project_sidebar_list'] = user.projects_assigned.all().order_by('-modified_on')[:5]
+        context['issue_sidebar_list'] = user.issues_assigned.all().order_by('-modified_on')[:5]
+    else:
+        context['project_sidebar_list'] = Project.objects.order_by('-visits')[:5]
+        context['issue_sidebar_list'] = Issue.objects.order_by('-visits')[:5]

@@ -77,6 +77,7 @@ input.comment-link {
   border-color: #808080;
 }
 
+
 .item-title {
   text-decoration: none;
   color: #ffffff;
@@ -97,6 +98,7 @@ input.comment-link {
 .item-dates {
   font-size: 12px;
 }
+
 
 .form-container {
   margin-top: 16px;
@@ -128,6 +130,7 @@ input.comment-link {
 
 }
 
+
 .btn {
   background-color: #D73A49 !important;
   color: #ffffff !important;
@@ -139,6 +142,7 @@ input.comment-link {
   border: 1px solid #D73A49;
   box-shadow: 0 0 5px #D73A49;
 }
+
 
 .add-form {
   display: none;
@@ -154,4 +158,22 @@ div[class^="reply-form-"] {
 
 div[class^="comment-form-"]{
   display: none;
+}
+
+
+.sidebar-container {
+  background-color: #2c2f33;
+  border: 1px solid #666666;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.sidebar {
+  background-color: #2c2f33;
+}
+
+.sidebar-text {
+  color: #999999;
+  font-size:13px;
+  margin: 0;
 }
