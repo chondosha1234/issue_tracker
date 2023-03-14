@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from django.urls import reverse
 import time
 
@@ -46,8 +47,9 @@ class AddAndDeleteCommentsTest(FunctionalTest):
         submit_btn.click()
 
         # the page refreshes again and now they can see their comment and their reply
-        # under it (indented 1 layer)
+        # under it (indented 1 layer). user has to click replies button to show replies
         self.assertRegex(self.browser.current_url, '/issue_details/')
+        self.wait_for_element_id('hide-replies-1').click()
         comments = self.wait_for_element_class('comment-list').text
         self.assertIn('This is a great issue', comments)
         self.assertIn('This is a great comment', comments)
@@ -63,6 +65,8 @@ class AddAndDeleteCommentsTest(FunctionalTest):
 
         # the page refreshes and now there is the comment and the reply and next level of reply
         self.assertRegex(self.browser.current_url, '/issue_details/')
+        self.wait_for_element_id('hide-replies-1').click()
+        self.wait_for_element_id('hide-replies-2').click()
         comments = self.wait_for_element_class('comment-list').text
         self.assertIn('This is a great issue', comments)
         self.assertIn('This is a great comment', comments)
@@ -81,6 +85,8 @@ class AddAndDeleteCommentsTest(FunctionalTest):
 
         # the page refreshes and now the comment is changed
         self.assertRegex(self.browser.current_url, '/issue_details/')
+        self.wait_for_element_id('hide-replies-1').click()
+        self.wait_for_element_id('hide-replies-2').click()
         comments = self.wait_for_element_class('comment-list').text
         self.assertIn('This is a great issue', comments)
         self.assertIn('This is a great comment but mine is better', comments)
@@ -94,23 +100,32 @@ class AddAndDeleteCommentsTest(FunctionalTest):
 
         # they click yes and the reply is gone
         alert.accept()
-        time.sleep(3)
+        time.sleep(2)
+
         self.assertRegex(self.browser.current_url, '/issue_details/')
+        self.wait_for_element_id('hide-replies-1').click()
         comments = self.wait_for_element_class('comment-list').text
         self.assertIn('This is a great issue', comments)
         self.assertIn('This is a great comment but mine is better', comments)
-        self.assertNotIn('This is a great reply', comments)
+
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'hide-replies-2')
 
         # they then do the same to delete the top level comment and press yes to confirm
         delete_btn = self.wait_for_element_id('delete-link-1').click()
         alert = self.browser.switch_to.alert
         self.assertIn('Are you sure you want to delete this comment?', alert.text)
         alert.accept()
-        time.sleep(3)
+        time.sleep(2)
 
         # the top level comment and its reply are gone
         self.assertRegex(self.browser.current_url, '/issue_details/')
         comments = self.wait_for_element_class('comment-list').text
-        self.assertNotIn('This is a great issue', comments)
-        self.assertNotIn('This is a great comment but mine is better', comments)
-        self.assertNotIn('This is a great reply', comments)
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'hide-replies-1')
+        with self.assertRaises(NoSuchElementException):
+            time.sleep(1)
+            self.browser.find_element(By.LINK_TEXT, 'hide-replies-2')
+        

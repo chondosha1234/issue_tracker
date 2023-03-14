@@ -47,9 +47,12 @@
     </div>
 
     {% if comment.replies.all|length %}
+      <a class="comment-link" id="hide-replies-{{ comment.id }}">{{ comment.reply_count }} Replies &darr;</a>
+      <div class="reply-tree-{{ comment.id }}">
       <ul class="list-group">
-        {% include "tree_view.html" with comment_list=comment.replies.all %}
+        {% include "comment_tree.html" with comment_list=comment.replies.all %}
       </ul>
+      </div>
     {% endif %}
 
   </li>

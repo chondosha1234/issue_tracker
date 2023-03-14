@@ -152,7 +152,11 @@ div[class^="reply-form-"] {
   display: none;
 }
 
-div[class^="comment-form-"]{
+div[class^="comment-form-"] {
+  display: none;
+}
+
+div[class^="reply-tree-"] {
   display: none;
 }
 
