@@ -80,9 +80,11 @@
   </div>
   {% endif %}
 
+  <br>
+
   <div class="row">
     <div class="col-md-11 offset-md-1">
-      <h6>Comments:</h6>
+      <h6>Comments ({{ issue.comment_count }}):</h6>
       <div class="comment-form">
         <form action="{% url 'issues:add_comment' issue.id %}" method='post'>
           {% csrf_token %}
@@ -104,4 +106,6 @@
   </div>
 
 <script src="{% static 'collapse.js' %}"></script>
+<script src="{% static 'indent.js' %}"></script>
+<script src="{% static 'edit_comment.js' %}"></script>
 {% endblock %}

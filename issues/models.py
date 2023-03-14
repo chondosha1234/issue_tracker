@@ -20,7 +20,7 @@ class Project(models.Model):
         return self.title
 
     @property
-    def number_of_issues(self):
+    def issue_count(self):
         return self.issue_list.count()
 
 
@@ -52,6 +52,10 @@ class Issue(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def comment_count(self):
+        return self.comments.count()
 
 
 class Comment(models.Model):

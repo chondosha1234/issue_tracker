@@ -9,8 +9,6 @@ edit_links.forEach(link => {
     let comment_text = document.getElementsByClassName(text_name)[0];
     let comment_form = document.getElementsByClassName(form_name)[0];
 
-    console.log(comment_text);
-    console.log(comment_form);
     if (comment_form.style.display === 'none'){
       comment_form.style.display = 'block';
       comment_text.style.display = 'none';

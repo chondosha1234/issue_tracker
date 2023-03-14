@@ -176,6 +176,12 @@ div[class^="reply-tree-"] {
   color: #999999;
   font-size:13px;
   margin: 0;
+  margin-left: 20px;
+}
+
+.issue-items {
+  border-bottom: 1px solid #666666;
+  margin-bottom: 10px;
 }
 
 .page-select {

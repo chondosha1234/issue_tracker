@@ -29,7 +29,43 @@ class ProjectModelTest(TestCase):
             created_by=user,
             modified_by=user,
         )
-        self.assertEqual(project.number_of_issues, 2)
+        self.assertEqual(project.issue_count, 2)
+
+
+class IssueModelTest(TestCase):
+
+    def test_property_comment_count(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = Project.objects.create(
+            title='Test Project',
+            summary='This is a test project',
+            created_by=user,
+            modified_by=user
+        )
+        issue = Issue.objects.create(
+            title='Test Issue',
+            project=project,
+            summary='This is a test issue',
+            created_by=user,
+            modified_by=user,
+        )
+        self.assertEqual(issue.comment_count, 0)
+
+        comment1 = Comment.objects.create(
+            user=user,
+            text='This is a comment',
+            issue=issue,
+        )
+        self.assertEqual(issue.comment_count, 1)
+
+        comment2 = Comment.objects.create(
+            user=user,
+            text='This is a comment',
+            issue=issue,
+            parent_comment=comment1,
+        )
+        self.assertEqual(issue.comment_count, 2)
+
 
 
 class CommentModelTest(TestCase):
