@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 import time
@@ -65,9 +64,9 @@ class SearchBarTest(FunctionalTest):
         # a project comes up that says 'Test Project' but the project that says 'Other Project'
         # is not shown
         self.wait_for_element_link('Test Project')
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Other Project')
+
+        item_list = self.wait_for_element_class('list-group').text
+        self.assertNotIn('Other Project', item_list)
 
         # they go to navbar and click on issues and see list with 2 issues; 'Test Issue' and
         # 'Other Issue'
@@ -82,9 +81,9 @@ class SearchBarTest(FunctionalTest):
         self.wait_for_element_class('btn').click()
 
         self.wait_for_element_link('Test Issue')
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Other Issue')
+
+        item_list = self.wait_for_element_class('list-group').text
+        self.assertNotIn('Other Issue', item_list)
 
         # next the enter just 'Test' in the search and see both 'Test Project' and 'Test Issue'
         search_input = self.wait_for_element_class('form-control')
@@ -93,10 +92,9 @@ class SearchBarTest(FunctionalTest):
         self.wait_for_element_class('btn').click()
 
         self.wait_for_element_link('Test Issue')
-        self.wait_for_element_link('Test Project')
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Other Project')
+
+        item_list = self.wait_for_element_class('list-group').text
+        self.assertNotIn('Other Project', item_list)
 
         # they enter user name and see a list of users with just the name.
         search_input = self.wait_for_element_class('form-control')
@@ -105,6 +103,6 @@ class SearchBarTest(FunctionalTest):
         self.wait_for_element_class('btn').click()
 
         self.wait_for_element_link('user1234@example.org')
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Test Project')
+
+        item_list = self.wait_for_element_class('list-group').text
+        self.assertNotIn('Test Project', item_list)

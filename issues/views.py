@@ -39,8 +39,6 @@ def search(request):
     context = {
         'search_form': form,
         'results': results,
-        'project_sidebar_list': project_sidebar_list,
-        'issue_sidebar_list': issue_sidebar_list
     }
     get_sidebar_context(request.user, context)
     return render(request, 'search.html', context)
@@ -100,7 +98,7 @@ class IssueListView(ListView):
         start_page = max(page.number - self.page_range_displayed//2, 1)
         end_page = min(page.number + self.page_range_displayed//2, paginator.num_pages)
         context['page_range'] = range(start_page, end_page+1)
-        
+
         context['search_form'] = SearchForm()
         context['filter_term'] = self.kwargs.get('filter_term')
         return context
