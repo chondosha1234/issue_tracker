@@ -25,7 +25,7 @@ class PaginationTest(FunctionalTest):
                 modified_by=user
             )
 
-        project = Project.objects.get(id=1)
+        project = Project.objects.get(title='project 1')
         for i in range(1, 51):
             Issue.objects.create(
                 title='issue ' + str(i),
