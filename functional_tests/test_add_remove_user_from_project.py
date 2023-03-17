@@ -43,6 +43,7 @@ class AddAndRemoveUsersTest(FunctionalTest):
 
         # they see button to add user to project
         # they click button and an input pops up to enter username
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Add User').click()
         input = self.wait_for_element_name('username')
         submit_btn = self.wait_for_element_id('add-user-btn')
@@ -55,6 +56,7 @@ class AddAndRemoveUsersTest(FunctionalTest):
         self.wait_for_element_link('Test Issue').click()
 
         # they click the button and an input pops up to enter a username
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Add User').click()
         input = self.wait_for_element_name('username')
         submit_btn = self.wait_for_element_id('add-user-btn')
@@ -71,12 +73,14 @@ class AddAndRemoveUsersTest(FunctionalTest):
         # they click on project and see buttons available
         self.wait_for_element_link('Test Project').click()
 
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Update Project')
         self.wait_for_element_link('Create Issue')
 
         # they click on project and see buttons available
         self.wait_for_element_link('Test Issue').click()
 
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Update Issue')
 
         # they log out and main user logs back in
@@ -86,6 +90,7 @@ class AddAndRemoveUsersTest(FunctionalTest):
         self.wait_for_element_link('Test Project').click()
 
         # they enter the other_user name and press submit
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Remove User').click()
         remove_input = self.browser.find_elements(By.NAME, 'username')[1]
         remove_input.send_keys('other_guy')
@@ -94,6 +99,7 @@ class AddAndRemoveUsersTest(FunctionalTest):
 
         # they do the same with the issue and press submit
         self.wait_for_element_link('Test Issue').click()
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Remove User').click()
         remove_input = self.browser.find_elements(By.NAME, 'username')[1]
         remove_input.send_keys('other_guy')
@@ -111,13 +117,16 @@ class AddAndRemoveUsersTest(FunctionalTest):
         self.wait_for_element_link('Projects').click()
         self.wait_for_element_link('Test Project').click()
 
+
+        ### change test for dropdown actions
+
         # they cannot see buttons because they are not assigned
         with self.assertRaises(NoSuchElementException):
             time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Update Project')
+            self.browser.find_element(By.CLASS_NAME, 'dropdown-menu')
 
         # they click on issue and cannot see buttons here either
         self.wait_for_element_link('Test Issue').click()
         with self.assertRaises(NoSuchElementException):
             time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Update Issue')
+            self.browser.find_element(By.CLASS_NAME, 'dropdown-menu')

@@ -28,6 +28,7 @@ class OpenAndCloseIssueTest(FunctionalTest):
         self.assertIn('Open', issue_info)
 
         # they see button to close issue and press it
+        self.wait_for_element_class('dropdown-toggle').click()
         close_btn = self.wait_for_element_id('close-btn')
         close_btn.click()
 
@@ -36,6 +37,7 @@ class OpenAndCloseIssueTest(FunctionalTest):
         self.assertIn('Closed', issue_info)
 
         # they see button to open issue and press it
+        self.wait_for_element_class('dropdown-toggle').click()
         open_btn = self.wait_for_element_id('open-btn')
         open_btn.click()
 
@@ -44,6 +46,7 @@ class OpenAndCloseIssueTest(FunctionalTest):
         self.assertIn('Open', issue_info)
 
         # they press open again while issue is open and nothing happens
+        self.wait_for_element_class('dropdown-toggle').click()
         open_btn = self.wait_for_element_id('open-btn')
         open_btn.click()
         issue_info = self.wait_for_element_class('item-info').text

@@ -44,7 +44,8 @@ class TestUserCRUD(FunctionalTest):
         project_title_link.click()
         self.assertRegex(self.browser.current_url, '/project_details/1')
 
-        # they see button to update project and press it
+        # they see dropdown button for actions and button to update project and press it
+        self.wait_for_element_class('dropdown-toggle').click()
         update_project_btn = self.wait_for_element_link('Update Project')
         update_project_btn.click()
         # they change 'Test' to 'Test Project' and hit submit
@@ -63,6 +64,7 @@ class TestUserCRUD(FunctionalTest):
         self.assertIn('This is a test project', project_summary)
 
         # they see a button to add an issue to project (because they are the owner/creator)
+        self.wait_for_element_class('dropdown-toggle').click()
         create_issue_btn = self.wait_for_element_link('Create Issue')
 
         # they click the button and are taken to a form to create issue
@@ -91,6 +93,7 @@ class TestUserCRUD(FunctionalTest):
         self.assertIn('Test Issue', issue_title)
 
         # they see buttons for update and delete issue (because they created it)
+        self.wait_for_element_class('dropdown-toggle').click()
         update_issue_btn = self.wait_for_element_link('Update Issue')
         delete_issue_btn = self.wait_for_element_id('delete-btn')
 
@@ -118,6 +121,7 @@ class TestUserCRUD(FunctionalTest):
         self.assertIn('Changed Test Issue', issue_title)
 
         # they click on delete issue and get a warning prompt
+        self.wait_for_element_class('dropdown-toggle').click()
         delete_issue_btn = self.wait_for_element_id('delete-btn')
         delete_issue_btn.click()
 
@@ -144,6 +148,7 @@ class TestUserCRUD(FunctionalTest):
             self.browser.find_element(By.LINK_TEXT, 'Changed Test Issue')
 
         # they return to project detail page and see button for delete project
+        self.wait_for_element_class('dropdown-toggle').click()
         delete_project_btn = self.wait_for_element_id('delete-btn')
 
         # they click it and see similar warning and click yes
@@ -176,6 +181,7 @@ class TestUserCRUD(FunctionalTest):
         project_title_link = self.wait_for_element_link('Test Project')
         project_title_link.click()
 
+        self.wait_for_element_class('dropdown-toggle').click()
         create_issue_btn = self.wait_for_element_link('Create Issue')
         create_issue_btn.click()
 
@@ -200,23 +206,11 @@ class TestUserCRUD(FunctionalTest):
 
         with self.assertRaises(NoSuchElementException):
             time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Create Issue')
-
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Update Project')
-
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Delete Project')
+            self.browser.find_element(By.CLASS_NAME, 'dropdown-menu')
 
         issue_title_link = self.wait_for_element_link('Test Issue')
         issue_title_link.click()
 
         with self.assertRaises(NoSuchElementException):
             time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Update Issue')
-
-        with self.assertRaises(NoSuchElementException):
-            time.sleep(1)
-            self.browser.find_element(By.LINK_TEXT, 'Delete Issue')
+            self.browser.find_element(By.CLASS_NAME, 'dropdown-menu')

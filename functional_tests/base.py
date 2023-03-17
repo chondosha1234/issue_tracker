@@ -40,6 +40,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.wait_for_element_selector('.btn').click()
         self.wait_for_element_link('Test Project').click()
 
+        self.wait_for_element_class('dropdown-toggle').click()
         self.wait_for_element_link('Create Issue').click()
         self.wait_for_element_name('title').send_keys('Test Issue')
         self.wait_for_element_id('id_priority_2').click()

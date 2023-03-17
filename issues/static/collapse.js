@@ -4,8 +4,9 @@ const reply_links = document.querySelectorAll('[id^="reply-link-"]');
 const hide_replies = document.querySelectorAll('[id^="hide-replies-"]')
 
 if(add_user){
-  add_user.addEventListener("click", function() {
+  add_user.addEventListener("click", function(element) {
     this.classList.toggle("active");
+    element.stopPropagation();
     let content = document.getElementsByClassName('add-form')[0];
     if (content.style.display === "block"){
       content.style.display = "none";
@@ -16,8 +17,9 @@ if(add_user){
 }
 
 if(remove_user){
-  remove_user.addEventListener("click", function() {
+  remove_user.addEventListener("click", function(element) {
     this.classList.toggle("active");
+    element.stopPropagation();
     let content = document.getElementsByClassName('remove-form')[0];
     if (content.style.display === "block"){
       content.style.display = "none";
