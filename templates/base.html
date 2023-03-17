@@ -17,6 +17,13 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'issues:home' %}">Home</a>
 
+        {% if search_form %}
+        <form class="d-flex ms-auto search-form" action="{% url 'issues:search' %}" method="get">
+          {{ search_form.as_p }}
+          <button class='btn' type="submit">Search</button>
+        </form>
+        {% endif %}
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -44,18 +51,8 @@
       </div>
     </nav>
 
-    <div class="row">
-      <div class="col-4">
-        {% if search_form %}
-          <form action="{% url 'issues:search' %}" method="get">
-            {{ search_form.as_p }}
-            <button class='btn' type="submit">Search</button>
-          </form>
-        {% endif %}
-      </div>
-    </div>
 
-    <div class="row">
+    <div class="row main-container">
       <div class="col-8">
         {% block body_content %}
         {% endblock %}

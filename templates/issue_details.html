@@ -9,13 +9,17 @@
   <div class="row">
     <div class="col-md-11 offset-md-1">
       <div class="issue-description">
-        <br>
           <h4> {{ issue.title }} </h4>
           <p> Project : <a class="item-title" href="{% url 'issues:project_details' issue.project.id %}"> {{ issue.project }}</a></p>
           <p> Description: </p>
           <p>{{ issue.summary }}</p>
           <div class="item-info">
-            <p> {{ issue.issue_status }} &nbsp; &nbsp; &nbsp; {{ issue.priority }} </p>
+            {% if issue.issue_status == 'Open' %}
+              <p>Status: <span style="color: green;">{{ issue.issue_status }}</span></p>
+            {% else %}
+              <p>Status: <span style="color: red;">{{ issue.issue_status }}</span>
+            {% endif %}
+            <p>Priority: {{ issue.priority }} </p>
           </div>
           <div class='item-dates'>
             <p> Owner: {{ issue.created_by }} -- Created on: {{ issue.created_on | date }}</p>

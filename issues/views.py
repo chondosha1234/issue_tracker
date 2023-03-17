@@ -51,6 +51,7 @@ class UserHome(DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserHome, self).get_context_data(**kwargs)
         projects = self.request.user.projects_assigned.all()
+        context['search_form'] = SearchForm()
         context['project_list'] = projects
         context['project_sidebar_list'] = projects.order_by('-modified_on')[:5]
         context['issue_sidebar_list'] = self.request.user.issues_assigned.all().order_by('-modified_on')[:5]
@@ -226,8 +227,10 @@ def create_project(request):
             form.save()
             return redirect('issues:user_home', user_id=user.pk)
 
+    search_form = SearchForm()
     context = {
         'form': form,
+        'search_form': search_form
     }
     get_sidebar_context(request.user, context)
     return render(request, 'create_project.html', context)
@@ -244,9 +247,11 @@ def update_project(request, project_id):
             form.save()
             return redirect('issues:project_details', project_id=project.id)
 
+    search_form = SearchForm()
     context = {
         'form': form,
-        'project': project
+        'project': project,
+        'search_form': search_form
     }
     get_sidebar_context(request.user, context)
     return render(request, 'update_project.html', context)
@@ -304,9 +309,12 @@ def create_issue(request, project_id):
         if form.is_valid():
             form.save()
             return redirect('issues:project_details', project_id=project.id)
+
+    search_form = SearchForm()
     context = {
         'form': form,
-        'project': project
+        'project': project,
+        'search_form': search_form
     }
     get_sidebar_context(request.user, context)
     return render(request, 'create_issue.html', context)
@@ -323,9 +331,12 @@ def update_issue(request, issue_id):
         if form.is_valid():
             form.save()
             return redirect('issues:issue_details', issue_id=issue.id)
+
+    search_form = SearchForm()
     context = {
         'form': form,
-        'issue': issue
+        'issue': issue,
+        'search_form': search_form
     }
     get_sidebar_context(request.user, context)
     return render(request, 'update_issue.html', context)
