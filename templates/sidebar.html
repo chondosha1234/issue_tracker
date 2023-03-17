@@ -9,6 +9,11 @@
     <h5>Top Issues:</h5>
     {% endif %}
 
+    {% if not issue_sidebar_list.all|length %}
+      <li class="list-group-item sidebar">There are currently no issues</li>
+      <br>
+    {% endif %}
+
     {% for issue in issue_sidebar_list %}
     <li class="list-group-item sidebar">
       <h6><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h6>
@@ -27,6 +32,11 @@
     <h5>Your recent projects:</h5>
     {% else %}
     <h5>Top Projects:</h5>
+    {% endif %}
+
+    {% if not project_sidebar_list.all|length %}
+      <li class="list-group-item sidebar">There are currently no projects</li>
+      <br>
     {% endif %}
 
     {% for project in project_sidebar_list %}
