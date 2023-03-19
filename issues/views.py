@@ -40,6 +40,22 @@ def search(request):
         'search_form': form,
         'results': results,
     }
+    paginator = Paginator(results, 10)
+    if request.GET.get('page'):
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    context['page_obj'] = page_obj
+
+    context['current_page'] = page_number
+    context['total_pages'] = paginator.num_pages
+
+    page_range_displayed = 8
+    start_page = max(page_number - page_range_displayed//2, 1)
+    end_page = min(page_number + page_range_displayed//2, paginator.num_pages)
+    context['page_range'] = range(start_page, end_page+1)
+
     get_sidebar_context(request.user, context)
     return render(request, 'search.html', context)
 
