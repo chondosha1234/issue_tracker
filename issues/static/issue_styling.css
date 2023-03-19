@@ -6,6 +6,15 @@ body {
   color: #ffffff;
 }
 
+.username {
+  text-decoration: underline;
+}
+
+.user-email {
+  color: #999999;
+}
+
+
 .row {
   margin-top: 5px;
 }
