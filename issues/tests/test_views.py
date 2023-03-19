@@ -76,7 +76,7 @@ class SearchTest(TestCase):
 
     def test_search_returns_correct_user(self):
         user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
-        response = self.client.get('/search', data={'search_query': 'user1234@example.org'})
+        response = self.client.get('/search', data={'search_query': 'chondosha'})
         self.assertEquals(response.context['results'][0], user)
 
     def test_search_does_not_return_incorrect_issue(self):
@@ -119,7 +119,7 @@ class SearchTest(TestCase):
     def test_search_does_not_return_incorrect_user(self):
         user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
         other_user = User.objects.create(name='other_guy', email='otheruser@example.org', password='chondosha5563')
-        response = self.client.get('/search', data={'search_query': 'user1234@example.org'})
+        response = self.client.get('/search', data={'search_query': 'chondosha'})
         self.assertEquals(len(response.context['results']), 1)
 
     def test_search_returns_both_issues_and_projects(self):

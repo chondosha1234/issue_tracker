@@ -34,7 +34,7 @@ def search(request):
             search_query = form.cleaned_data['search_query']
             results.extend(Project.objects.filter(title__icontains=search_query))
             results.extend(Issue.objects.filter(title__icontains=search_query))
-            results.extend(User.objects.filter(email__icontains=search_query))
+            results.extend(User.objects.filter(name__icontains=search_query))
 
     context = {
         'search_form': form,

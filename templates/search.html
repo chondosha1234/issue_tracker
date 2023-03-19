@@ -31,7 +31,7 @@
           </div>
         {% endif %}
         {% if item|is_instance:"User" %}
-          <h4><a class="item-title" href="{% url 'issues:user_profile' item.pk %}">{{ item.email }}</a></h4>
+          <h4><a class="item-title" href="{% url 'issues:user_profile' item.pk %}">{{ item.name }}</a></h4>
           <div class="item-info">
             <p>Date Joined: {{ item.date_joined }}
           </div>

@@ -99,10 +99,10 @@ class SearchBarTest(FunctionalTest):
         # they enter user name and see a list of users with just the name.
         search_input = self.wait_for_element_class('form-control')
         search_input.clear()
-        search_input.send_keys('user1234@example.org')
+        search_input.send_keys('chondosha')
         self.wait_for_element_class('search-btn').click()
 
-        self.wait_for_element_link('user1234@example.org')
+        self.wait_for_element_link('chondosha')
 
         item_list = self.wait_for_element_class('list-group').text
         self.assertNotIn('Test Project', item_list)
