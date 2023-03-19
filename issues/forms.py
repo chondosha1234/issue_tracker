@@ -78,7 +78,7 @@ class IssueForm(forms.ModelForm):
 
     class Meta:
         model = Issue
-        fields = ['title', 'priority', 'summary']
+        fields = ['title', 'summary', 'priority']
         widgets = {
             'title': forms.TextInput(
                 attrs={
@@ -86,16 +86,16 @@ class IssueForm(forms.ModelForm):
                     'placeholder': 'Enter a title',
                 },
             ),
-            'priority': forms.RadioSelect(
-                choices=PRIORITY_CHOICES,
-                attrs={
-                    'class': 'form-check',
-                },
-            ),
             'summary': forms.Textarea(
                 attrs={
                     'class': 'form-control',
                     'placeholder': 'Enter a description',
+                },
+            ),
+            'priority': forms.RadioSelect(
+                choices=PRIORITY_CHOICES,
+                attrs={
+                    'class': 'form-check-inline text-start',
                 },
             ),
         }

@@ -131,7 +131,7 @@ input.comment-link {
   box-shadow: 0 0 5px #D73A49;
 }
 
-.form-check {
+.form-check-inline {
   list-style: none;
 }
 
@@ -156,8 +156,9 @@ input.comment-link {
   background-color: #D73A49 !important;
   color: #ffffff !important;
   border: 1px solid black;
-  border-radius: 5px;
   text-shadow: 1px 1px black;
+  border-radius: 5px;
+  height: 40px;
 }
 
 .search-btn:hover {
@@ -169,6 +170,7 @@ input.comment-link {
   margin-right: 10px;
   height: 40px;
 }
+
 
 .dropdown-menu {
   background-color: #2c2f33 !important;
