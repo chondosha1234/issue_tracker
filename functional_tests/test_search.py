@@ -55,7 +55,7 @@ class SearchBarTest(FunctionalTest):
 
         # at the top between navbar and main page they see a search bar
         search_input = self.wait_for_element_class('form-control')
-        submit_btn = self.wait_for_element_class('btn')
+        submit_btn = self.wait_for_element_class('search-btn')
 
         # they enter in a term to search  'Test Project'
         search_input.send_keys('Test Project')
@@ -78,7 +78,7 @@ class SearchBarTest(FunctionalTest):
         # again they type in the search bar 'Test Issue' and only that issue is shown
         search_input = self.wait_for_element_class('form-control')
         search_input.send_keys('Test Issue')
-        self.wait_for_element_class('btn').click()
+        self.wait_for_element_class('search-btn').click()
 
         self.wait_for_element_link('Test Issue')
 
@@ -89,7 +89,7 @@ class SearchBarTest(FunctionalTest):
         search_input = self.wait_for_element_class('form-control')
         search_input.clear()
         search_input.send_keys('Test')
-        self.wait_for_element_class('btn').click()
+        self.wait_for_element_class('search-btn').click()
 
         self.wait_for_element_link('Test Issue')
 
@@ -100,7 +100,7 @@ class SearchBarTest(FunctionalTest):
         search_input = self.wait_for_element_class('form-control')
         search_input.clear()
         search_input.send_keys('user1234@example.org')
-        self.wait_for_element_class('btn').click()
+        self.wait_for_element_class('search-btn').click()
 
         self.wait_for_element_link('user1234@example.org')
 

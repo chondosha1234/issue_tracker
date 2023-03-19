@@ -153,7 +153,16 @@ input.comment-link {
 }
 
 .search-btn {
-  font-size: 14px;
+  background-color: #D73A49 !important;
+  color: #ffffff !important;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-shadow: 1px 1px black;
+}
+
+.search-btn:hover {
+  border: 1px solid #D73A49;
+  box-shadow: 0 0 5px #D73A49;
 }
 
 .search-form {
