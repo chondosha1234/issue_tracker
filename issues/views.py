@@ -40,22 +40,7 @@ def search(request):
         'search_form': form,
         'results': results,
     }
-    paginator = Paginator(results, 10)
-    if request.GET.get('page'):
-        page_number = request.GET.get('page')
-    else:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    context['page_obj'] = page_obj
-
-    context['current_page'] = page_number
-    context['total_pages'] = paginator.num_pages
-
-    page_range_displayed = 8
-    start_page = max(page_number - page_range_displayed//2, 1)
-    end_page = min(page_number + page_range_displayed//2, paginator.num_pages)
-    context['page_range'] = range(start_page, end_page+1)
-
+    add_pagination(request, results, context)
     get_sidebar_context(request.user, context)
     return render(request, 'search.html', context)
 
@@ -69,8 +54,8 @@ class UserHome(DetailView):
         projects = self.request.user.projects_assigned.all()
         context['search_form'] = SearchForm()
         context['project_list'] = projects
-        context['project_sidebar_list'] = projects.order_by('-modified_on')[:5]
-        context['issue_sidebar_list'] = self.request.user.issues_assigned.all().order_by('-modified_on')[:5]
+        get_sidebar_context(self.request.user, context)
+        add_pagination(self.request, projects, context)
         return context
 
     def get_object(self):
@@ -78,7 +63,20 @@ class UserHome(DetailView):
 
 
 class UserProfile(DetailView):
-    pass
+    model = User
+    template_name = 'user_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfile, self).get_context_data(**kwargs)
+        projects = self.object.projects_assigned.all()
+        context['search_form'] = SearchForm()
+        context['project_list'] = projects
+        get_sidebar_context(self.request.user, context)
+        add_pagination(self.request, projects, context)
+        return context
+
+    def get_object(self):
+        return User.objects.get(pk=self.kwargs.get('user_id'))
 
 
 class IssueListView(ListView):
@@ -481,3 +479,21 @@ def get_sidebar_context(user, context):
     else:
         context['project_sidebar_list'] = Project.objects.order_by('-visits')[:5]
         context['issue_sidebar_list'] = Issue.objects.order_by('-visits')[:5]
+
+
+def add_pagination(request, items, context):
+    paginator = Paginator(items, 10)
+    if request.GET.get('page'):
+        page_number = request.GET.get('page')
+    else:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    context['page_obj'] = page_obj
+
+    context['current_page'] = page_number
+    context['total_pages'] = paginator.num_pages
+
+    page_range_displayed = 8
+    start_page = max(page_number - page_range_displayed//2, 1)
+    end_page = min(page_number + page_range_displayed//2, paginator.num_pages)
+    context['page_range'] = range(start_page, end_page+1)
