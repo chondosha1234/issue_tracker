@@ -601,6 +601,19 @@ class AddAndRemoveUserToProjectTest(TestCase):
 
     def test_removes_user_from_list_of_assigned_users(self):
         user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        other_guy = User.objects.create(name='other_guy', email="other_guy@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        project.assigned_users.add(user)
+        project.assigned_users.add(other_guy)
+        project.save()
+        self.assertEqual(project.assigned_users.count(), 2)
+
+        response = self.client.post(f'/remove_user_from_project/{project.id}', data={'username': 'other_guy'})
+        self.assertEqual(project.assigned_users.count(), 1)
+
+    def test_cannot_remove_last_assigned_user(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
         project = create_test_project(user)
         self.client.force_login(user)
         project.assigned_users.add(user)
@@ -608,7 +621,20 @@ class AddAndRemoveUserToProjectTest(TestCase):
         self.assertEqual(project.assigned_users.count(), 1)
 
         response = self.client.post(f'/remove_user_from_project/{project.id}', data={'username': 'chondosha'})
-        self.assertEqual(project.assigned_users.count(), 0)
+        self.assertEqual(project.assigned_users.count(), 1)
+
+    def test_user_can_remove_themselves_from_project(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        other_guy = User.objects.create(name='other_guy', email="other_guy@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        self.client.force_login(user)
+        project.assigned_users.add(user)
+        project.assigned_users.add(other_guy)
+        project.save()
+        self.assertEqual(project.assigned_users.count(), 2)
+
+        response = self.client.post(f'/remove_user_from_project/{project.id}', data={'username': 'chondosha'})
+        self.assertEqual(project.assigned_users.count(), 1)
 
 
 class CreateIssueTest(TestCase):
@@ -807,6 +833,7 @@ class AddAndRemoveUserToIssueTest(TestCase):
 
     def test_removes_user_from_list_of_assigned_users(self):
         user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        other_guy = User.objects.create(name='other_guy', email="other_guy@example.org", password="chondosha5563")
         project = create_test_project(user)
         issue = Issue.objects.create(
             title="Test",
@@ -817,11 +844,50 @@ class AddAndRemoveUserToIssueTest(TestCase):
         )
         self.client.force_login(user)
         issue.assigned_users.add(user)
+        issue.assigned_users.add(other_guy)
         issue.save()
+        self.assertEqual(issue.assigned_users.count(), 2)
+
+        response = self.client.post(f'/remove_user_from_issue/{issue.id}', data={'username': 'other_guy'})
         self.assertEqual(issue.assigned_users.count(), 1)
 
+    def test_cannot_remove_last_assigned_user(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        project.assigned_users.add(user)
+        project.save()
+        self.assertEqual(project.assigned_users.count(), 1)
+
+        response = self.client.post(f'/remove_user_from_project/{project.id}', data={'username': 'chondosha'})
+        self.assertEqual(project.assigned_users.count(), 1)
+
+    def test_user_can_remove_themselves_from_issue(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        other_guy = User.objects.create(name='other_guy', email="other_guy@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            created_by=user,
+            modified_by=user,
+        )
+        self.client.force_login(user)
+        issue.assigned_users.add(user)
+        issue.assigned_users.add(other_guy)
+        issue.save()
+        self.assertEqual(issue.assigned_users.count(), 2)
+
         response = self.client.post(f'/remove_user_from_issue/{issue.id}', data={'username': 'chondosha'})
-        self.assertEqual(issue.assigned_users.count(), 0)
+        self.assertEqual(issue.assigned_users.count(), 1)
 
 
 class OpenAndCloseIssueTest(TestCase):

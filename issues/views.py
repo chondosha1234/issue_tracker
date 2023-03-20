@@ -308,8 +308,9 @@ def remove_user_from_project(request, project_id):
         if form.is_valid():
             username = form.cleaned_data['username']
             user = User.objects.get(name=username)
-            project.assigned_users.remove(user)
-            project.save()
+            if project.assigned_users.count() > 1:
+                project.assigned_users.remove(user)
+                project.save()
             return redirect('issues:project_details', project_id=project.id)
 
     return redirect('issues:project_details', project_id=project.id)
@@ -394,8 +395,9 @@ def remove_user_from_issue(request, issue_id):
         if form.is_valid():
             username = form.cleaned_data['username']
             user = User.objects.get(name=username)
-            issue.assigned_users.remove(user)
-            issue.save()
+            if issue.assigned_users.count() > 1:
+                issue.assigned_users.remove(user)
+                issue.save()
             return redirect('issues:issue_details', issue_id=issue.id)
 
     return redirect('issues:issue_details', issue_id=issue.id)
