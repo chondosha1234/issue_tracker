@@ -32,7 +32,7 @@
         {% endif %}
         {% if item|is_instance:"User" %}
           <h4><a class="item-title" href="{% url 'issues:user_profile' item.pk %}">{{ item.name }}</a></h4>
-          <div class="item-info">
+          <div class="item-dates">
             <p>Date Joined: {{ item.date_joined }}
           </div>
         {% endif %}
