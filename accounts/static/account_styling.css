@@ -87,9 +87,27 @@ a:visited:hover {
   box-shadow: 0 0 5px #D73A49;
 }
 
+#id_old_password {
+  color: #ffffff;
+  background-color: #2c2f33;
+  border: 1px solid #666666;
+  border-radius: 5px;
+  outline: none;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+#id_old_password:focus {
+  color: #ffffff;
+  background-color: #2c2f33;
+  border: 1px solid #D73A49;
+  box-shadow: 0 0 5px #D73A49;
+}
+
 #id_new_password1 {
   color: #ffffff;
   background-color: #2c2f33;
+  border: 1px solid #666666;
   border-radius: 5px;
   outline: none;
   padding: 5px;
@@ -106,6 +124,7 @@ a:visited:hover {
 #id_new_password2 {
   color: #ffffff;
   background-color: #2c2f33;
+  border: 1px solid #666666;
   border-radius: 5px;
   outline: none;
   padding: 5px;
