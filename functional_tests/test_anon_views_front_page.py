@@ -9,9 +9,9 @@ from issues.models import Project, Issue
 User = get_user_model()
 
 class AnonVisitsHomeTest(FunctionalTest):
+    reset_sequences = True
 
     def test_visit_home_page_and_look_at_issues_and_projects(self):
-        reset_sequences = True
 
         # creating project and issues for testing purposes
         user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")

@@ -10,6 +10,7 @@ from issues.models import Project, Issue
 User = get_user_model()
 
 class SearchBarTest(FunctionalTest):
+    reset_sequences = True
 
     def test_search_projects_issues_and_users(self):
 

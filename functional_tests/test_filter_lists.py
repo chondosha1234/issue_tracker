@@ -11,6 +11,7 @@ from issues.models import Project, Issue
 User = get_user_model()
 
 class FilterTest(FunctionalTest):
+    reset_sequences = True
 
     def test_filter_terms_sort_and_show_issues_and_projects(self):
 

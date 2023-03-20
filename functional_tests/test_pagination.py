@@ -11,9 +11,9 @@ from issues.models import Project, Issue
 User = get_user_model()
 
 class PaginationTest(FunctionalTest):
+    reset_sequences = True
 
     def test_project_and_issue_lists_have_pagination(self):
-        reset_sequences = True
 
         # creating many projects and issues to test pagination
         user = User.objects.create(name="chondosha", email="user1234@example.org", password="chondosha5563")

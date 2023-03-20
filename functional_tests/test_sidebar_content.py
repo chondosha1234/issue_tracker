@@ -8,9 +8,9 @@ from .base import FunctionalTest
 User = get_user_model()
 
 class SideBarTest(FunctionalTest):
+    reset_sequences = True
 
     def test_sidebar_displays_correct_info(self):
-        reset_sequences = True
 
         # creating second user for test
         other_user = User.objects.create(name='other_guy', email="other_user@example.org", password="chondosha5563")

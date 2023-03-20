@@ -5,6 +5,7 @@ from .base import FunctionalTest
 import time
 
 class LoginTest(FunctionalTest):
+    reset_sequences = True
 
     def test_can_login_and_logout(self):
 
