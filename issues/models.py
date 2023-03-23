@@ -42,9 +42,10 @@ class Issue(models.Model):
     priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='Low')
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_created_by')
-    modified_on = models.DateField(auto_now=True)
+    modified_on = models.DateTimeField(auto_now=True)
     modified_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_modified_by')
     visits = models.IntegerField(default=0)
+    last_visit = models.DateTimeField(auto_now=True)
     assigned_users = models.ManyToManyField(User, related_name='issues_assigned')
 
     class Meta:

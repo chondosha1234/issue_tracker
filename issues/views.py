@@ -5,6 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+import datetime
 
 from issues.models import Issue, Project, Comment
 from issues.forms import (
@@ -126,6 +128,7 @@ class IssueDetailView(DetailView):
     def get_object(self):
         issue = Issue.objects.get(pk=self.kwargs.get('issue_id'))
         issue.visits += 1
+        issue.last_visit = datetime.datetime.now()
         issue.save()
         return issue
 
@@ -475,7 +478,7 @@ def delete_comment(request, comment_id):
 def get_sidebar_context(user, context):
     if user.is_authenticated:
         context['project_sidebar_list'] = user.projects_assigned.all().order_by('-modified_on')[:5]
-        context['issue_sidebar_list'] = user.issues_assigned.all().order_by('-modified_on')[:5]
+        context['issue_sidebar_list'] = user.issues_assigned.all().order_by('-last_visit')[:5]
     else:
         context['project_sidebar_list'] = Project.objects.order_by('-visits')[:5]
         context['issue_sidebar_list'] = Issue.objects.order_by('-visits')[:5]

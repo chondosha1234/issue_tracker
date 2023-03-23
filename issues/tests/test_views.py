@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.urls import resolve
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+import time
+import datetime
 
-from issues.views import home_page, IssueListView
+from issues.views import home_page, IssueListView, get_sidebar_context
 from issues.models import Issue, Project, Comment
 from issues.forms import (
     CreateProjectForm, CreateIssueForm,
@@ -321,6 +324,26 @@ class IssueDetailTest(TestCase):
         response = self.client.get(f'/issue_details/{issue.id}')
         changed_issue = Issue.objects.get(id=issue.id)
         self.assertEqual(changed_issue.visits, 1)
+
+    def test_visit_updates_last_visit_field(self):
+        user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
+        project = create_test_project(user)
+        issue = Issue.objects.create(
+            title="Test",
+            project=project,
+            summary="This is a test issue",
+            issue_status='Open',
+            created_by=user,
+            modified_by=user,
+        )
+        original_time = issue.last_visit
+        time.sleep(1)
+        response = self.client.get(f'/issue_details/{issue.id}')
+        changed_issue = Issue.objects.get(id=issue.id)
+        self.assertNotAlmostEqual(changed_issue.last_visit, original_time, delta=datetime.timedelta(seconds=1))
+
+        issue_timezone = changed_issue.last_visit.tzinfo
+        self.assertAlmostEqual(changed_issue.last_visit, datetime.datetime.now(issue_timezone), delta=datetime.timedelta(seconds=1))
 
 
 class ProjectListViewTest(TestCase):
@@ -1110,3 +1133,63 @@ class DeleteCommentTest(TestCase):
         self.assertEqual(Comment.objects.count(), 1)
         self.client.post(f'/delete_comment/{comment.id}')
         self.assertEqual(Comment.objects.count(), 0)
+
+
+class SideBarContextTest(TestCase):
+
+    def test_get_recent_issues_for_user(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        for i in range(0, 6):
+            issue = Issue.objects.create(
+                title='Test' + str(i),
+                project=project,
+                summary='This is a test issue',
+                created_by=user,
+                modified_by=user,
+                last_visit=datetime.datetime(2023, 6, 11)
+            )
+            issue.assigned_users.add(user)
+            issue.save()
+        recent_issue = Issue.objects.get(id=6)
+        least_recent_issue = Issue.objects.get(id=1)
+
+        for i in range(1, 7):
+            issue = Issue.objects.get(id=i)
+            issue.save()   # saving updates last_visit field
+
+        self.client.force_login(user)
+
+        context = {}
+        get_sidebar_context(user, context)
+        issue_list = context['issue_sidebar_list']
+        self.assertIn(recent_issue, issue_list)
+        self.assertNotIn(least_recent_issue, issue_list)
+
+
+    def test_anon_user_gets_top_issues(self):
+        user = User.objects.create(name='chondosha', email='user1234@example.org', password='chondosha5563')
+        project = create_test_project(user)
+        for i in range(0, 6):
+            Issue.objects.create(
+                title='Test',
+                project=project,
+                summary='This is a test issue',
+                created_by=user,
+                modified_by=user,
+                visits=2
+            )
+        first_issue = Issue.objects.get(id=1)
+        last_issue = Issue.objects.get(id=6)
+
+        last_issue.visits = 3
+        first_issue.visits = 1
+
+        last_issue.save()
+        first_issue.save()
+
+        context = {}
+        get_sidebar_context(AnonymousUser(), context)
+        issue_list = context['issue_sidebar_list']
+        self.assertIn(last_issue, issue_list)
+        self.assertNotIn(first_issue, issue_list)
