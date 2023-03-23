@@ -411,6 +411,7 @@ def open_issue(request, issue_id):
     if request.method == 'POST':
         if issue.issue_status == 'Closed' and user in issue.assigned_users.all():
             issue.issue_status = 'Open'
+            issue.closed_by = None
             issue.save()
             return redirect('issues:issue_details', issue_id=issue.id)
 
@@ -424,6 +425,7 @@ def close_issue(request, issue_id):
     if request.method == 'POST':
         if issue.issue_status == 'Open' and user in issue.assigned_users.all():
             issue.issue_status = 'Closed'
+            issue.closed_by = user
             issue.save()
             return redirect('issues:issue_details', issue_id=issue.id)
 

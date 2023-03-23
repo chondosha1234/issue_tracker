@@ -6,9 +6,10 @@
 {% block body_content %}
   <div class="row">
     <div class="col-md-8 offset-md-2">
+      <h3 class="username">{{ user.name }}</h3>
       <div class="user-info">
-        <h3 class="username">{{ user.name }}</h3>
-        <h6 class="user-email">{{ user.email }}</h6>
+        <h6>{{ user.email }}</h6>
+        <p>Number of closed issues: {{ user.closed_issues.count }}
       </div>
     </div>
   </div>
@@ -30,13 +31,13 @@
       </ul>
 
       {% include 'pagination.html' %}
-      
+
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-8 offset-md-2">
-      <div class="col-md-3 offset-md-2">
+      <div class="col-md-3 offset-md-1">
         <a class="btn btn-info right mr-2" href="{% url 'issues:create_project' %}">Create Project</a>
       </div>
     </div>

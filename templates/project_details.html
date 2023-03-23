@@ -35,7 +35,7 @@
                   <p>Priority: <span style="color:green">{{ issue.priority }}</span></p>
                 {% endif %}
               {% else %}
-                <p>Status: <span style="color: red;">{{ issue.issue_status }}</span>
+                <p>Status: <span style="color: red;">{{ issue.issue_status }}</span> -- Closed by: {{ issue.closed_by }}</p>
               {% endif %}
             </div>
             <div class="item-dates">

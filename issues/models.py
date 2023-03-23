@@ -47,6 +47,7 @@ class Issue(models.Model):
     visits = models.IntegerField(default=0)
     last_visit = models.DateTimeField(auto_now=True)
     assigned_users = models.ManyToManyField(User, related_name='issues_assigned')
+    closed_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='closed_issues', default=None, null=True, blank=True)
 
     class Meta:
         ordering = ('-visits', '-created_on', 'issue_status', 'priority')
