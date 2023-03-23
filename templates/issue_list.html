@@ -37,7 +37,12 @@
           <h4><a class="item-title" href="{% url 'issues:issue_details' issue.id %}">{{ issue.title }}</a></h4>
           <div class="item-info">
             <p> Project: {{ issue.project }}</p>
-            <p> {{ issue.issue_status }} &nbsp; &nbsp; &nbsp; {{ issue.priority }}</p>
+            {% if issue.issue_status == 'Open' %}
+              <p>Status: <span style="color: green;">{{ issue.issue_status }}</span></p>
+              <p>Priority: {{ issue.priority }} </p>
+            {% else %}
+              <p>Status: <span style="color: red;">{{ issue.issue_status }}</span>
+            {% endif %}
           </div>
           <div class="item-dates">
             <p> Created By: {{ issue.created_by }} -- {{ issue.created_on }}</p>
