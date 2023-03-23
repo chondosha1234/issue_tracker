@@ -52,6 +52,7 @@ body {
 
 .comment-link {
   color:#666666;
+  padding: 5px;
 }
 
 .comment-link:hover {
@@ -65,6 +66,11 @@ input.comment-link {
   outline: none;
   text-decoration: underline;
   cursor: pointer;
+  padding: 0px;
+}
+
+.comment-actions {
+  display: flex;
 }
 
 
@@ -103,6 +109,15 @@ input.comment-link {
 }
 
 .item-title:hover {
+  color: #ed4245;
+}
+
+.comment-author {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.comment-author:hover {
   color: #ed4245;
 }
 
@@ -215,6 +230,10 @@ div[class^="comment-form-"] {
 
 div[class^="reply-tree-"] {
   display: none;
+}
+
+p[class^="comment-text-"] {
+  margin-left: 10px;
 }
 
 

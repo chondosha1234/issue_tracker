@@ -6,8 +6,9 @@
 {% block body_content %}
   <div class="row">
     <div class="col-md-8 offset-md-2">
+      <h3 class="username">{{ user.name }}</h3>
       <div class="user-info">
-        <h3 class="username">{{ user.name }}</h3>
+        <p>Number of closed issues: {{ user.closed_issues.count }}
       </div>
     </div>
   </div>
@@ -27,7 +28,7 @@
       </ul>
 
       {% include 'pagination.html' %}
-      
+
     </div>
   </div>
 
