@@ -42,7 +42,7 @@
       Actions
     </button>
     <ul class="dropdown-menu">
-      <li><a class="dropdown-item" href="{% url 'issues:update_issue' issue.project.id %}">Update Issue</a></li>
+      <li><a class="dropdown-item" href="{% url 'issues:update_issue' issue.id %}">Update Issue</a></li>
       <li>
         <form action="{% url 'issues:delete_issue' issue.id %}" method="post">
          {% csrf_token %}
