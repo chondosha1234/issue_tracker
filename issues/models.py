@@ -5,7 +5,7 @@ User = get_user_model()
 
 class Project(models.Model):
     title = models.CharField(max_length=64)
-    summary = models.CharField(max_length=128)
+    summary = models.CharField(max_length=1024)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_created_by')
     modified_on = models.DateTimeField(auto_now=True)
