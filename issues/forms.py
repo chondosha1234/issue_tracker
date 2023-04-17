@@ -6,9 +6,9 @@ from issues.models import Issue, Project, Comment
 User = get_user_model()
 
 PRIORITY_CHOICES = [
-    ('HIGH', {'label': 'High', 'class': 'form-check-input'}),
-    ('MED', {'label': 'High', 'class': 'form-check-input'}),
-    ('LOW', {'label': 'High', 'class': 'form-check-input'}),
+    (3, {'label': 'High', 'class': 'form-check-input'}),
+    (2, {'label': 'High', 'class': 'form-check-input'}),
+    (1, {'label': 'High', 'class': 'form-check-input'}),
 ]
 
 

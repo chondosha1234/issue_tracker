@@ -206,6 +206,8 @@ class ProjectDetailView(ListView):
                 return issues.filter(issue_status='Open').order_by('-created_on')
             if filter == 'closed':
                 return issues.filter(issue_status='Closed').order_by('-created_on')
+            if filter == 'priority':
+                return issues.order_by('-priority')
             if not filter:
                 return issues.order_by('-created_on')
         else:

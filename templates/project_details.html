@@ -18,6 +18,7 @@
             <div class="filter-buttons">
               <a class="filter" href="{% url 'issues:project_details' project_id=project.id filter_term='open' %}">Open</a>
               <a class="filter" href="{% url 'issues:project_details' project_id=project.id filter_term='closed' %}">Closed</a>
+              <a class="filter" href="{% url 'issues:project_details' project_id=project.id filter_term='priority' %}">Priority</a>
             </div>
           </li>
         {% for issue in issue_list %}
@@ -27,12 +28,12 @@
               <p> Project: {{ issue.project }}</p>
               {% if issue.issue_status == 'Open' %}
                 <p>Status: <span style="color: green;">{{ issue.issue_status }}</span></p>
-                {% if issue.priority == 'HIGH' %}
-                  <p>Priority: <span style="color:red">{{ issue.priority }}</span></p>
-                {% elif issue.priority == 'MED' %}
-                  <p>Priority: <span style="color:yellow">{{ issue.priority }}</span></p>
+                {% if issue.priority == 3 %}
+                  <p>Priority: <span style="color:red">HIGH</span></p>
+                {% elif issue.priority == 2 %}
+                  <p>Priority: <span style="color:yellow">MED</span></p>
                 {% else %}
-                  <p>Priority: <span style="color:green">{{ issue.priority }}</span></p>
+                  <p>Priority: <span style="color:green">LOW</span></p>
                 {% endif %}
               {% else %}
                 <p>Status: <span style="color: red;">{{ issue.issue_status }}</span> -- Closed by: {{ issue.closed_by }}</p>

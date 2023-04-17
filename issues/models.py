@@ -26,10 +26,11 @@ class Project(models.Model):
 
 class Issue(models.Model):
     PRIORITY_CHOICES = [
-        ('HIGH', 'High'),
-        ('MED', 'Medium'),
-        ('LOW', 'Low'),
+        (3, 'High'),
+        (2, 'Medium'),
+        (1, 'Low'),
     ]
+
     STATUS_CHOICES = [
         ('Open', 'Open'),
         ('Closed', 'Closed')
@@ -39,7 +40,7 @@ class Issue(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='issue_list')
     summary = models.TextField()
     issue_status = models.CharField(max_length=6, choices=STATUS_CHOICES, default='Open')
-    priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='Low')
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issue_created_by')
     modified_on = models.DateTimeField(auto_now=True)
