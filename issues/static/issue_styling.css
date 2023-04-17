@@ -222,6 +222,7 @@ input.comment-link {
 
 div[class^="reply-form-"] {
   display: none;
+  width: 90%;
 }
 
 div[class^="comment-form-"] {
