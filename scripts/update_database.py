@@ -1,4 +1,4 @@
-from issues.models import Issue
+from ..issues.models import Issue
 
 priority_map = {
     'HIGH': 3,
