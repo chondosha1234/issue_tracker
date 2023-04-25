@@ -7,5 +7,7 @@ priority_map = {
 }
 
 for obj in Issue.objects.all():
+    print(f"current object priority: {obj.priority}")
     obj.priority = priority_map[obj.priority]
     obj.save()
+    print(f"new object priority: {obj.priority}")
