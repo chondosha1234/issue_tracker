@@ -677,7 +677,7 @@ class CreateIssueTest(TestCase):
         self.assertEquals(Issue.objects.count(), 0)
         response = self.client.post(f'/create_issue/{project.id}', data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'This is a test'
         })
         self.assertEquals(Issue.objects.count(), 1)
@@ -689,7 +689,7 @@ class CreateIssueTest(TestCase):
 
         response = self.client.post(f'/create_issue/{project.id}', data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'This is a test'
         })
         self.assertRedirects(response, f'/project_details/{project.id}')
@@ -728,7 +728,7 @@ class UpdateIssueTest(TestCase):
 
         response = self.client.post(f'/update_issue/{issue.id}', data={
             'title': 'Test Issue',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'This is a test'
         })
         self.assertEquals(Issue.objects.count(), 1)
@@ -749,7 +749,7 @@ class UpdateIssueTest(TestCase):
 
         response = self.client.post(f'/update_issue/{issue.id}', data={
             'title': 'Test Issue',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'This is a test'
         })
         self.assertRedirects(response, f'/issue_details/{issue.id}')

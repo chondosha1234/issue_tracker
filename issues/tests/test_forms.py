@@ -135,7 +135,7 @@ class CreateIssueFormTest(TestCase):
         project = create_test_project(user)
         form = CreateIssueForm(user=user, project=project, data={
             'title': '',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'Test project'
         })
         self.assertFalse(form.is_valid())
@@ -145,7 +145,7 @@ class CreateIssueFormTest(TestCase):
         project = create_test_project(user)
         form = CreateIssueForm(user=user, project=project, data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': ''
         })
         self.assertFalse(form.is_valid())
@@ -155,7 +155,7 @@ class CreateIssueFormTest(TestCase):
         project = create_test_project(user)
         form = CreateIssueForm(user=user, project=project, data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'Test project'
         })
         form.save()
@@ -166,7 +166,7 @@ class CreateIssueFormTest(TestCase):
         project = create_test_project(user)
         form = CreateIssueForm(user=user, project=project, data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'Test project'
         })
         form.save()
@@ -197,7 +197,7 @@ class UpdateIssueFormTest(TestCase):
         self.assertEquals(issue.title, 'Test Issue')
         form = UpdateIssueForm(user=user, project=project, instance=issue, data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'Test project'
         })
         form.save()
@@ -215,15 +215,15 @@ class UpdateIssueFormTest(TestCase):
             created_by=user,
             modified_by=user,
         )
-        self.assertEquals(issue.priority, 'Low')
+        self.assertEquals(issue.priority, 1)
         form = UpdateIssueForm(user=user, project=project, instance=issue, data={
             'title': 'Test',
-            'priority': 'HIGH',
+            'priority': 3,
             'summary': 'Test project'
         })
         form.save()
         updated_issue = Issue.objects.get(pk=issue.id)
-        self.assertEquals(updated_issue.priority, 'HIGH')
+        self.assertEquals(updated_issue.priority, 3)
 
     def test_update_changes_modified_but_not_original_creator(self):
         user = User.objects.create(name='chondosha', email="user1234@example.org", password="chondosha5563")
@@ -241,7 +241,7 @@ class UpdateIssueFormTest(TestCase):
         other_user = User.objects.create(name='other_guy', email="other_user@example.org", password="chondosha5563")
         form = UpdateIssueForm(user=other_user, project=project, instance=issue, data={
             'title': 'Test',
-            'priority': 'LOW',
+            'priority': 1,
             'summary': 'Test project'
         })
         form.save()
